@@ -6,7 +6,7 @@
 .pricing-section {
   position: relative;
   width: 100%;
-  padding: 120px 0 140px;
+  padding: 120px 28px 140px;
   background-color: var(--bg-dark);
   color: var(--text-primary);
   overflow: hidden;
@@ -30,9 +30,9 @@
 .pricing-container {
   position: relative;
   z-index: 2;
-  max-width: 1240px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 0 28px;
+  padding: 64px 28px;
 }
 
 /* --------------------------------------------------------------------------

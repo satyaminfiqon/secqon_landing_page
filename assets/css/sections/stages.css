@@ -28,13 +28,14 @@
   justify-content: center;
   padding: 30px 0;
   overflow: hidden;
+  padding: 0px 152px;
 }
 
 /* Section Header (Headline + Subtitle side-by-side) */
 .stages-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: last baseline;
   margin-bottom: 40px;
   gap: 40px;
 }
@@ -55,7 +56,7 @@
 
 .stages-subtitle {
   max-width: 380px;
-  font-size: 0.85rem;
+  font-size: 1.25rem;
   line-height: 1.55;
   color: #64748b;
   margin: 0;

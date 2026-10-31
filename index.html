@@ -27,7 +27,9 @@
   <link rel="stylesheet" href="assets/css/sections/header.css">
   <link rel="stylesheet" href="assets/css/sections/hero.css">
   <link rel="stylesheet" href="assets/css/sections/stages.css">
+  <link rel="stylesheet" href="assets/css/sections/security.css">
   <link rel="stylesheet" href="assets/css/sections/pricing.css">
+  <link rel="stylesheet" href="assets/css/sections/proves.css">
 </head>
 
 <body>
@@ -595,7 +597,7 @@
     <!-- Pricing Section -->
     <section class="pricing-section" id="pricing">
       <div class="container pricing-container">
-        
+
         <!-- Header -->
         <div class="pricing-header">
           <h2 class="pricing-title">Simple, Transparent <span class="pricing-title-green">Pricing</span></h2>
@@ -604,7 +606,8 @@
           <!-- Billing Cycle Switch -->
           <div class="billing-toggle-container">
             <span class="billing-cycle-label active" id="labelMonthly">Monthly</span>
-            <button class="billing-toggle-switch" id="billingToggle" type="button" role="switch" aria-checked="false" aria-label="Toggle annual billing discount">
+            <button class="billing-toggle-switch" id="billingToggle" type="button" role="switch" aria-checked="false"
+              aria-label="Toggle annual billing discount">
               <span class="billing-toggle-thumb"></span>
             </button>
             <span class="billing-cycle-label" id="labelAnnual">Annual</span>
@@ -614,7 +617,7 @@
 
         <!-- 4 Cards Grid -->
         <div class="pricing-grid">
-          
+
           <!-- Card 1: FREE -->
           <div class="pricing-card">
             <div class="pricing-card-top">
@@ -624,7 +627,7 @@
                 <span class="plan-price-suffix">forever</span>
               </div>
               <p class="plan-description">Perfect for personal projects and initial assessment.</p>
-              
+
               <div class="plan-features-divider"></div>
 
               <ul class="plan-features-list">
@@ -663,7 +666,7 @@
                 <span class="plan-price-suffix">/mo</span>
               </div>
               <p class="plan-description">For teams that need written reports and daily monitoring.</p>
-              
+
               <div class="plan-features-divider"></div>
 
               <ul class="plan-features-list">
@@ -703,7 +706,7 @@
                 <span class="plan-price-suffix">/mo</span>
               </div>
               <p class="plan-description">For growing teams with multiple assets and SPAs.</p>
-              
+
               <div class="plan-features-divider"></div>
 
               <ul class="plan-features-list">
@@ -742,7 +745,7 @@
                 <span class="plan-price-suffix">/mo</span>
               </div>
               <p class="plan-description">For enterprises requiring automated pentests with real payloads.</p>
-              
+
               <div class="plan-features-divider"></div>
 
               <ul class="plan-features-list">
@@ -776,7 +779,7 @@
         <!-- Bottom Section: ONE-OFF PENTEST REPORT -->
         <div class="pricing-one-off-section">
           <div class="one-off-tag">ONE-OFF PENTEST REPORT</div>
-          
+
           <div class="one-off-header-row">
             <div class="one-off-price-wrap">
               <span class="plan-price-currency plan-price-sup">$</span>
@@ -809,6 +812,156 @@
 
       </div>
     </section>
+
+       <!-- Security Section: Machine production testing restraint -->
+    <section class="security-section" id="security">
+      <div class="container security-container">
+
+        <!-- Section Header -->
+        <div class="security-header">
+          <h2 class="security-title">
+            You are letting a machine test your<br>
+            production systems.<br>
+            Here is exactly what it may do.
+          </h2>
+          <p class="security-subtitle">
+            We are a security vendor, so our own restraint is part of the product. These are enforced in the engine,
+            not promised in a policy document.
+          </p>
+        </div>
+
+        <!-- Sticky Split Showcase (Left: Sticky Fixed Image, Right: Scrolling Text) -->
+        <div class="security-sticky-showcase">
+
+          <!-- Left: Fixed / Sticky Image Viewer -->
+          <div class="security-visual-col">
+            <div class="security-image-frame">
+              <div class="security-image-track" id="securityImageTrack">
+                <div class="sec-image-slide" data-slide="0">
+                  <img src="assets/images/nothingtest01.png" alt="Nothing is tested until you prove you own it">
+                </div>
+                <div class="sec-image-slide" data-slide="1">
+                  <img src="assets/images/bounded02.png" alt="Bounded, rate-limited, non-destructive">
+                </div>
+                <div class="sec-image-slide" data-slide="2">
+                  <img src="assets/images/internet03.png" alt="Internal addresses are refused">
+                </div>
+                <div class="sec-image-slide" data-slide="3">
+                  <img src="assets/images/evidenc.png" alt="Evidence is redacted before any model sees it">
+                </div>
+                <div class="sec-image-slide" data-slide="4">
+                  <img src="assets/images/dns05.png" alt="The free check really is passive">
+                </div>
+                <div class="sec-image-slide" data-slide="5">
+                  <img src="assets/images/authorisation.png" alt="Every authorisation is logged, and the log cannot be edited">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Scrolling Text Steps -->
+          <div class="security-text-col">
+
+            <!-- Step 01 -->
+            <div class="security-text-step active" data-index="0">
+              <div class="security-card-number">01</div>
+              <div class="security-card-body">
+                <h3 class="security-card-heading">Nothing is tested until you<br>prove you own it</h3>
+                <p class="security-card-desc">
+                  DNS TXT, hosted file or meta tag. An unverified asset cannot be scanned — the gate is in the engine,
+                  not the UI.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 02 -->
+            <div class="security-text-step" data-index="1">
+              <div class="security-card-number">02</div>
+              <div class="security-card-body">
+                <h3 class="security-card-heading">Bounded, rate-limited,<br>non-destructive</h3>
+                <p class="security-card-desc">
+                  A request budget per host and hard scope enforcement, so a scan never wanders onto a neighbouring
+                  system. Standard sends no attack payloads at all; the pentest tier sends real ones, which is what it
+                  is for, and asks you to acknowledge that on every scan.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 03 -->
+            <div class="security-text-step" data-index="2">
+              <div class="security-card-number">03</div>
+              <div class="security-card-body">
+                <h3 class="security-card-heading">Internal addresses<br>are refused</h3>
+                <p class="security-card-desc">
+                  Any target resolving to a private or reserved range is rejected before a packet leaves, and again
+                  per-connection during the scan.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 04 -->
+            <div class="security-text-step" data-index="3">
+              <div class="security-card-number">04</div>
+              <div class="security-card-body">
+                <h3 class="security-card-heading">Evidence is redacted<br>before any model sees it</h3>
+                <p class="security-card-desc">
+                  Secrets, tokens and personal data are stripped in the pipeline rather than trusted to a prompt. Your
+                  findings never train a model.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 05 -->
+            <div class="security-text-step" data-index="4">
+              <div class="security-card-number">05</div>
+              <div class="security-card-body">
+                <h3 class="security-card-heading">The free check<br>really is passive</h3>
+                <p class="security-card-desc">
+                  A DNS lookup, a few short TLS handshakes and a couple of ordinary HTTPS GETs of your homepage. No ports
+                  swept, no payload sent, no path requested beyond the one you give it.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 06 -->
+            <div class="security-text-step" data-index="5">
+              <div class="security-card-number">06</div>
+              <div class="security-card-body">
+                <h3 class="security-card-heading">Every authorisation is logged,<br>and the log cannot be edited</h3>
+                <p class="security-card-desc">
+                  Accepting the agreements, proving an asset, each scan you attest to, every scope-guard refusal and every
+                  share link is written to an append-only, HMAC-chained record. There is no self-service view of it yet —
+                  ask us and we will produce your organisation's log.
+                </p>
+              </div>
+            </div>
+
+          </div> <!-- /security-text-col -->
+
+        </div> <!-- /security-sticky-showcase -->
+
+      </div>
+    </section>
+
+    <!-- Proves Section: Scanners tell you what is there. SecQon proves what is exploitable. -->
+    <section class="proves-section" id="proves">
+      <div class="container proves-container">
+        <h2 class="proves-title">
+          <span class="proves-highlight-green">Scanners</span> tell you what is there.<br>
+          <span class="proves-highlight-blue">SecQon</span> proves what is exploitable.
+        </h2>
+        <p class="proves-desc">
+          SecQon tests your internet-facing assets the way an attacker would, validates every candidate finding before
+          it reaches you, and produces the OWASP- and SOC 2-mapped report your customer or auditor is asking for.<br>
+          Self-service from $49 a month — no sales call, no five-figure engagement.
+        </p>
+        <div class="proves-actions">
+          <a href="#buy-report" class="btn btn-proves-green">Buy one report - $99</a>
+          <a href="#report-details" class="btn btn-proves-outline">What is in the report</a>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Interactive Scanner Background Script -->
@@ -816,6 +969,9 @@
 
   <!-- Interactive Stages Scroll & Animation Controller -->
   <script src="assets/js/stages.js"></script>
+
+  <!-- Interactive Security Deck Scroll & Animation Controller -->
+  <script src="assets/js/security.js"></script>
 
   <!-- Interactive Pricing Billing Toggle Controller -->
   <script src="assets/js/pricing.js"></script>
