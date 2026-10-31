@@ -1,0 +1,498 @@
+/* ==========================================================================
+   Pricing Section Styles
+   Pixel-perfect match to provided reference design
+   ========================================================================== */
+
+.pricing-section {
+  position: relative;
+  width: 100%;
+  padding: 120px 0 140px;
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  overflow: hidden;
+  z-index: 25;
+}
+
+/* Subtle background lighting effect */
+.pricing-section::before {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 550px;
+  background: radial-gradient(circle, rgba(16, 42, 86, 0.18) 0%, rgba(4, 7, 12, 0) 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pricing-container {
+  position: relative;
+  z-index: 2;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* --------------------------------------------------------------------------
+   Header & Subtitle
+   -------------------------------------------------------------------------- */
+.pricing-header {
+  text-align: center;
+  margin-bottom: 52px;
+}
+
+.pricing-title {
+  font-weight: normal;
+  font-size: clamp(2.4rem, 2.7vw, 3.4rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  margin-bottom: 14px;
+}
+
+.pricing-title-green {
+  color: #4fa951;
+}
+
+.pricing-subtitle {
+  font-size: 16px;
+  color: #8c9bb0;
+  max-width: 750px;
+  margin: 0 auto 34px;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   Billing Cycle Toggle (Monthly / Annual + Save 17%)
+   -------------------------------------------------------------------------- */
+.billing-toggle-container {
+  font-family: "JetBrains Mono";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  user-select: none;
+}
+
+.billing-cycle-label {
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: #8391a5;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.billing-cycle-label.active {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.billing-toggle-switch {
+  position: relative;
+  width: 42px;
+  height: 22px;
+  background-color: #091224;
+  border: 1px solid #1c2d4a;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.billing-toggle-switch:focus-visible {
+  box-shadow: 0 0 0 2px #2563eb;
+}
+
+.billing-toggle-thumb {
+  display: block;
+  width: 17px;
+  height: 16px;
+  background-color: #2563eb;
+  border-radius: 2px;
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(0);
+}
+
+.billing-toggle-switch[aria-checked="true"] .billing-toggle-thumb {
+  transform: translateX(19px);
+  background-color: #2563eb;
+}
+
+.billing-badge-save {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #4fa951;
+  background: rgba(79, 169, 81, 0.12);
+  border: 1px solid rgba(79, 169, 81, 0.38);
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+}
+
+/* --------------------------------------------------------------------------
+   Plans 4-Card Grid
+   -------------------------------------------------------------------------- */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.pricing-card {
+  position: relative;
+  /* background: linear-gradient(180deg, #0b1730 0%, #060e20 100%); */
+  background-color: #0A1020;
+  border: 1px solid #162746;
+  /* border-radius: 10px; */
+  padding: 32px 24px 74px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.pricing-card:hover {
+  border-color: #233e6e;
+  box-shadow: 0 8px 32px rgba(5, 14, 32, 0.7);
+  transform: translateY(-2px);
+}
+
+.pricing-card-top {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* Popular Card (GROWTH) */
+.pricing-card.is-popular {
+  background: radial-gradient(ellipse 95% 70% at 50% 32%,
+      rgba(35, 85, 165, 0.28) 0%,
+      rgba(9, 21, 44, 0.85) 75%),
+    linear-gradient(180deg,
+      #051a3d 0%,
+      #09152b 100%);
+  border: 1px solid #4fa951;
+  box-shadow: 0 0 32px rgba(79, 169, 81, 0.16), 0 0 50px rgba(16, 55, 120, 0.25);
+}
+
+.pricing-card.is-popular:hover {
+  border-color: #5dc05f;
+  box-shadow: 0 0 38px rgba(79, 169, 81, 0.22), 0 0 60px rgba(20, 70, 150, 0.35);
+}
+
+.pricing-popular-badge {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #54b958;
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Plan Header Category Tags */
+.plan-category-tag {
+  font-family: "JetBrains Mono";
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.tag-green {
+  color: #4fa951;
+}
+
+.tag-blue {
+  color: #3b82f6;
+}
+
+.tag-amber {
+  color: #e59b2c;
+}
+
+/* Price Display */
+.plan-price-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.plan-price-currency {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.plan-price-sup {
+  font-size: 1.35rem;
+  line-height: 1;
+  position: relative;
+  top: 3px;
+  margin-right: 2px;
+}
+
+.plan-price-amount {
+  /* font-family: var(--font-display); */
+  font-family: "JetBrains Mono";
+  font-size: 2.75rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  transition: opacity 0.15s ease;
+}
+
+.plan-price-suffix {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #64748b;
+  margin-left: 6px;
+  align-self: flex-end;
+  padding-bottom: 4px;
+}
+
+.plan-description {
+  font-size: 0.85rem;
+  line-height: 1.48;
+  color: #8493a8;
+  margin-bottom: 22px;
+  min-height: 38px;
+}
+
+/* Divider above bullet points */
+.plan-features-divider {
+  width: 100%;
+  height: 1px;
+  background-color: #14223b;
+  margin: 0 0 22px;
+}
+
+.pricing-card.is-popular .plan-features-divider {
+  background-color: #1a2f52;
+}
+
+/* Features List */
+.plan-features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  flex-grow: 1;
+}
+
+.plan-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.835rem;
+  line-height: 1.42;
+  color: #9eb0c6;
+}
+
+.feature-chevron {
+  font-family: monospace, var(--font-main);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--accent-green);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* Card Action Button */
+.plan-action-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 13px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  user-select: none;
+}
+
+.btn-card-outline {
+  background-color: #060d1b;
+  border: 1px solid #1a2c4b;
+  color: #ffffff;
+}
+
+.btn-card-outline:hover {
+  background-color: #0c172d;
+  border-color: #2b497a;
+  transform: translateY(-1px);
+}
+
+.btn-card-solid-green {
+  background-color: #54b958;
+  border: 1px solid #54b958;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(79, 169, 81, 0.28);
+}
+
+.btn-card-solid-green:hover {
+  background-color: #48aa4c;
+  border-color: #48aa4c;
+  box-shadow: 0 6px 20px rgba(79, 169, 81, 0.4);
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   One-Off Pentest Report Section (Open Transparent Layout)
+   -------------------------------------------------------------------------- */
+.pricing-one-off-section,
+.pricing-one-off-card {
+  position: relative;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 44px 0 0;
+  margin-top: 12px;
+}
+
+.one-off-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #e59b2c;
+  margin-bottom: 16px;
+}
+
+.one-off-header-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 26px;
+}
+
+.one-off-price-wrap {
+  display: flex;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.one-off-price {
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+}
+
+.one-off-period {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #64748b;
+  margin-left: 6px;
+  align-self: center;
+}
+
+.one-off-desc {
+  font-size: 0.88rem;
+  color: #8493a8;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* 3 Horizontal Feature Items */
+.one-off-features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.one-off-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.835rem;
+  line-height: 1.42;
+  color: #9eb0c6;
+}
+
+/* Action Buttons Row */
+.one-off-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.one-off-actions-grid .plan-action-btn {
+  padding: 14px 24px;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Layouts
+   -------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .pricing-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pricing-section {
+    padding: 80px 0 100px;
+  }
+
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .one-off-features-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .one-off-actions-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .one-off-header-row {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .pricing-one-off-section,
+  .pricing-one-off-card {
+    padding: 32px 0 0;
+  }
+
+  .pricing-card {
+    padding: 28px 20px 24px;
+  }
+}
