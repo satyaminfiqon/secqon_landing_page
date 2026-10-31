@@ -1,0 +1,297 @@
+/* ==========================================================================
+   Security Section ("You are letting a machine test your production systems")
+   Split-screen sticky showcase: Left image is fixed, right text scrolls.
+   As new text enters display, the image scrolls up to show that section's image.
+   ========================================================================== */
+
+.security-section {
+  --sec-visual-width: 690px;
+  --sec-visual-height: 558px;
+  position: relative;
+  width: 100%;
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  padding: 27px 0 140px;
+  z-index: 22;
+}
+
+.security-container {
+  margin: 0 auto;
+}
+
+/* Header */
+.security-header {
+  text-align: center;
+  max-width: 820px;
+  margin: 0 auto 64px;
+  /* padding: 0 20px; */
+}
+
+.security-title {
+  font-size: clamp(2.1rem, 3.6vw, 3.1rem);
+  font-weight: 500;
+  line-height: 1.22;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  margin-bottom: 18px;
+  text-wrap: balance;
+}
+
+.security-subtitle {
+  font-size: 0.98rem;
+  line-height: 1.58;
+  color: #8c9bb0;
+  max-width: 660px;
+  margin: 0 auto;
+  font-weight: 400;
+}
+
+/* 2-Column Split Layout */
+.security-sticky-showcase {
+  display: grid;
+  grid-template-columns: minmax(550px, var(--sec-visual-width)) 1fr;
+  gap: 48px;
+  align-items: flex-start;
+  position: relative;
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   Left Column: Sticky Fixed Image Viewer
+   -------------------------------------------------------------------------- */
+.security-visual-col {
+  position: sticky;
+  top: max(80px, calc(50vh - (var(--sec-visual-height) / 2)));
+  width: 100%;
+  max-width: var(--sec-visual-width);
+  height: var(--sec-visual-height);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  z-index: 10;
+}
+
+.security-image-frame {
+  width: 100%;
+  max-width: var(--sec-visual-width);
+  height: var(--sec-visual-height);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Vertical Image Sliding Track */
+.security-image-track {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.sec-image-slide {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+}
+
+.sec-image-slide img {
+  width: 100%;
+  height: 100%;
+  max-width: var(--sec-visual-width);
+  max-height: var(--sec-visual-height);
+  object-fit: contain;
+  object-position: left center;
+  display: block;
+  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.5));
+}
+
+/* --------------------------------------------------------------------------
+   Right Column: Scrolling Text Steps
+   -------------------------------------------------------------------------- */
+.security-text-col {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 40px 0 120px;
+}
+
+.security-text-step {
+  height: var(--sec-visual-height);
+  min-height: var(--sec-visual-height);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0;
+  margin-bottom: 25vh;
+  opacity: 0.22;
+  filter: blur(0.4px);
+  transform: translateY(14px);
+  transition: opacity 0.5s ease, filter 0.5s ease, transform 0.5s ease;
+  cursor: pointer;
+}
+
+.security-text-step:first-child {
+  padding-top: 0;
+}
+
+.security-text-step:last-child {
+  margin-bottom: 35vh;
+}
+
+.security-text-step.active {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+.security-card-number {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3.8rem, 5.2vw, 4.8rem);
+  font-weight: 800;
+  color: #4fa951;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.security-card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.security-card-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.85rem, 2.6vw, 2.35rem);
+  font-weight: 600;
+  line-height: 1.22;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  max-width: 490px;
+}
+
+.security-card-desc {
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: #8c9bb0;
+  font-weight: 400;
+  max-width: 500px;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Layouts
+   -------------------------------------------------------------------------- */
+@media (max-width: 1200px) {
+  .security-section {
+    --sec-visual-width: 620px;
+    --sec-visual-height: 550px;
+  }
+
+  .security-sticky-showcase {
+    grid-template-columns: minmax(460px, var(--sec-visual-width)) 1fr;
+    gap: 36px;
+  }
+
+  .security-visual-col,
+  .security-image-frame {
+    height: var(--sec-visual-height);
+  }
+
+  .security-visual-col {
+    top: max(80px, calc(50vh - (var(--sec-visual-height) / 2)));
+  }
+
+  .security-text-step {
+    height: var(--sec-visual-height);
+    min-height: var(--sec-visual-height);
+  }
+}
+
+@media (max-width: 960px) {
+  .security-sticky-showcase {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .security-visual-col {
+    position: sticky;
+    top: 76px;
+    height: 300px;
+    max-width: 100%;
+    z-index: 30;
+    margin-bottom: 20px;
+  }
+
+  .security-image-frame {
+    height: 300px;
+    max-width: 100%;
+  }
+
+  .sec-image-slide {
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .sec-image-slide img {
+    object-position: center;
+    max-height: 300px;
+  }
+
+  .security-text-col {
+    padding: 0 0 80px;
+  }
+
+  .security-text-step {
+    height: auto;
+    min-height: auto;
+    padding: 30px 0;
+    margin-bottom: 40px;
+  }
+
+  .security-card-number {
+    position: static;
+    font-size: 2.8rem;
+    margin-bottom: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .security-section {
+    padding: 80px 0 100px;
+  }
+
+  .security-visual-col {
+    height: 240px;
+  }
+
+  .security-image-frame {
+    height: 240px;
+  }
+
+  .sec-image-slide {
+    padding: 8px;
+  }
+
+  .security-card-number {
+    font-size: 2.8rem;
+    margin-bottom: 14px;
+  }
+
+  .security-card-heading {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+  }
+}
