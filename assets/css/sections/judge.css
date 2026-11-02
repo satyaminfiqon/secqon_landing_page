@@ -1,8 +1,8 @@
 /* ==========================================================================
    Judge Section ("Point it at one domain and judge it on the result")
    - Framed cyber CTA banner with glowing borders
-   - Optical blurred vertical green light curtains / aurora rays on both flanks
-   - Centered headline, description, and high-contrast action buttons
+   - High-fidelity background artwork with green aurora light bursts
+   - Fully responsive across all device breakpoints (Desktop, Tablet, Mobile)
    ========================================================================== */
 
 .judge-section {
@@ -16,6 +16,7 @@
 
 .judge-container {
   max-width: 1260px;
+  width: 100%;
   margin: 0 auto;
   position: relative;
 }
@@ -23,10 +24,16 @@
 /* Framed Cyber Card / Banner */
 .judge-card {
   position: relative;
-  border-radius: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 14px;
   border: 1px solid rgba(79, 169, 81, 0.35);
-  background: #020408;
-  padding: 95px 36px;
+  background-color: #020408;
+  background-image: url('../../images/juge_section_Background.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  padding: 85px 44px;
   text-align: center;
   overflow: hidden;
   box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 35px rgba(79, 169, 81, 0.08);
@@ -58,103 +65,6 @@
 }
 
 /* --------------------------------------------------------------------------
-   Optical Blurred Vertical Green Light Curtains (Flanking Left & Right)
-   -------------------------------------------------------------------------- */
-.judge-curtain {
-  position: absolute;
-  top: -10%;
-  bottom: -10%;
-  width: 35%;
-  display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-  pointer-events: none;
-  overflow: hidden;
-  filter: blur(14px);
-  -webkit-filter: blur(14px);
-  opacity: 0.82;
-  z-index: 2;
-  animation: curtainBreath 6s infinite ease-in-out alternate;
-}
-
-.judge-curtain-left {
-  left: -20px;
-  mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0) 100%);
-  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0) 100%);
-}
-
-.judge-curtain-right {
-  right: -20px;
-  mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0) 100%);
-  -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0) 100%);
-}
-
-@keyframes curtainBreath {
-  0% {
-    opacity: 0.72;
-    transform: scaleX(0.96);
-  }
-  100% {
-    opacity: 0.92;
-    transform: scaleX(1.04);
-  }
-}
-
-/* Individual Vertical Light Streaks / Beams */
-.curtain-bar {
-  height: 100%;
-  border-radius: 6px;
-  background: linear-gradient(180deg, 
-    transparent 0%, 
-    rgba(79, 169, 81, 0.25) 15%, 
-    rgba(145, 235, 165, 0.88) 48%, 
-    rgba(255, 255, 255, 0.95) 50%, 
-    rgba(145, 235, 165, 0.88) 52%, 
-    rgba(79, 169, 81, 0.25) 85%, 
-    transparent 100%);
-  flex-shrink: 0;
-}
-
-/* Varied widths and opacities for organic dispersion */
-.curtain-bar:nth-child(1) { width: 5px; opacity: 0.55; }
-.curtain-bar:nth-child(2) { width: 11px; opacity: 0.75; }
-.curtain-bar:nth-child(3) { width: 7px; opacity: 0.65; }
-.curtain-bar:nth-child(4) { width: 15px; opacity: 0.9; }
-.curtain-bar:nth-child(5) { width: 6px; opacity: 0.5; }
-.curtain-bar:nth-child(6) { width: 12px; opacity: 0.8; }
-.curtain-bar:nth-child(7) { width: 8px; opacity: 0.6; }
-.curtain-bar:nth-child(8) { width: 16px; opacity: 0.95; }
-.curtain-bar:nth-child(9) { width: 5px; opacity: 0.45; }
-.curtain-bar:nth-child(10) { width: 10px; opacity: 0.7; }
-.curtain-bar:nth-child(11) { width: 4px; opacity: 0.4; }
-.curtain-bar:nth-child(12) { width: 8px; opacity: 0.65; }
-
-/* Subtle Ambient Radial Halos */
-.judge-ambient-glow-left {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  width: 420px;
-  height: 380px;
-  background: radial-gradient(ellipse at center, rgba(79, 169, 81, 0.22) 0%, transparent 68%);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.judge-ambient-glow-right {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  width: 420px;
-  height: 380px;
-  background: radial-gradient(ellipse at center, rgba(79, 169, 81, 0.22) 0%, transparent 68%);
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* --------------------------------------------------------------------------
    Center Content Block
    -------------------------------------------------------------------------- */
 .judge-content {
@@ -162,17 +72,20 @@
   z-index: 5;
   max-width: 680px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .judge-title {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 3.6vw, 2.85rem);
+  font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+  font-size: clamp(2rem, 3.4vw, 2.85rem);
   font-weight: 600;
   line-height: 1.22;
   letter-spacing: -0.025em;
   color: #ffffff;
-  margin-bottom: 20px;
+  margin: 0 auto 20px;
   text-wrap: balance;
+  word-break: break-word;
 }
 
 .judge-desc {
@@ -182,6 +95,7 @@
   max-width: 640px;
   margin: 0 auto 38px;
   font-weight: 400;
+  word-break: break-word;
 }
 
 /* Actions Group */
@@ -203,7 +117,12 @@
   font-size: 0.88rem;
   letter-spacing: 0.04em;
   box-shadow: 0 4px 18px rgba(79, 169, 81, 0.35);
-  transition: all var(--transition-normal);
+  transition: all var(--transition-normal, 0.25s ease);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
 .btn-judge-green:hover {
@@ -211,6 +130,7 @@
   border-color: #3eb544;
   transform: translateY(-1px);
   box-shadow: 0 6px 24px rgba(79, 169, 81, 0.5);
+  color: #ffffff;
 }
 
 .btn-judge-outline {
@@ -219,56 +139,208 @@
   font-weight: 500;
   padding: 13px 28px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(79, 169, 81, 0.45);
   font-size: 0.88rem;
   letter-spacing: 0.04em;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  transition: all var(--transition-normal);
+  transition: all var(--transition-normal, 0.25s ease);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
 .btn-judge-outline:hover {
-  border-color: rgba(79, 169, 81, 0.7);
-  background: rgba(79, 169, 81, 0.12);
+  border-color: rgba(79, 169, 81, 0.8);
+  background-color: rgba(79, 169, 81, 0.14);
   transform: translateY(-1px);
+  color: #ffffff;
 }
 
 /* --------------------------------------------------------------------------
-   Responsive Media Queries
+   Responsive Breakpoints
    -------------------------------------------------------------------------- */
-@media (max-width: 768px) {
+
+/* Laptops & Small Desktops (993px to 1200px) */
+@media (max-width: 1200px) and (min-width: 993px) {
   .judge-section {
-    padding: 20px 16px 80px;
+    padding: 35px 24px 95px;
   }
 
   .judge-card {
-    padding: 60px 20px;
+    padding: 75px 36px;
   }
 
   .judge-title {
-    font-size: 1.85rem;
+    font-size: clamp(1.85rem, 2.8vw, 2.4rem);
+    margin-bottom: 18px;
+  }
+
+  .judge-desc {
+    font-size: 0.98rem;
+    margin-bottom: 32px;
+  }
+}
+
+/* Tablets (769px to 992px) */
+@media (max-width: 992px) and (min-width: 769px) {
+  .judge-section {
+    padding: 30px 20px 85px;
+  }
+
+  .judge-card {
+    padding: 64px 28px;
+    background-size: cover;
+  }
+
+  .judge-title {
+    font-size: clamp(1.75rem, 3.2vw, 2.2rem);
+    margin-bottom: 16px;
   }
 
   .judge-desc {
     font-size: 0.94rem;
+    line-height: 1.58;
+    max-width: 580px;
     margin-bottom: 30px;
+  }
+
+  .judge-actions {
+    gap: 14px;
+  }
+}
+
+/* Small Tablets & Phablets (577px to 768px) */
+@media (max-width: 768px) {
+  .judge-section {
+    padding: 24px 16px 75px;
+  }
+
+  .judge-card {
+    padding: 50px 24px;
+    background-size: 100% 100%;
+    border-radius: 12px;
+  }
+
+  .judge-card::before {
+    left: 10%;
+    right: 10%;
+  }
+
+  .judge-card::after {
+    left: 14%;
+    right: 14%;
+  }
+
+  .judge-title {
+    font-size: clamp(1.65rem, 4.6vw, 2rem);
+    line-height: 1.22;
+    margin-bottom: 16px;
+  }
+
+  .judge-desc {
+    font-size: 0.92rem;
+    line-height: 1.56;
+    max-width: 520px;
+    margin-bottom: 28px;
+  }
+
+  .judge-desc-br {
+    display: none;
   }
 
   .judge-actions {
     flex-direction: column;
     width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
     gap: 12px;
   }
 
   .btn-judge-green,
   .btn-judge-outline {
     width: 100%;
-  }
-
-  .judge-curtain {
-    width: 45%;
-    filter: blur(10px);
-    opacity: 0.6;
+    padding: 13px 20px;
+    font-size: 0.85rem;
   }
 }
 
+/* Standard Mobile Screens (381px to 576px, e.g. iPhone 14/15/16, Pixel, Galaxy) */
+@media (max-width: 576px) {
+  .judge-section {
+    padding: 20px 14px 65px;
+  }
+
+  .judge-card {
+    padding: 44px 18px;
+    background-size: 100% 100%;
+    border-radius: 10px;
+  }
+
+  .judge-card::before {
+    left: 6%;
+    right: 6%;
+  }
+
+  .judge-card::after {
+    left: 10%;
+    right: 10%;
+  }
+
+  .judge-title {
+    font-size: clamp(1.48rem, 5.8vw, 1.8rem);
+    line-height: 1.22;
+    margin-bottom: 14px;
+  }
+
+  .judge-desc {
+    font-size: 0.88rem;
+    line-height: 1.52;
+    margin-bottom: 24px;
+  }
+
+  .judge-actions {
+    max-width: 100%;
+    gap: 10px;
+  }
+
+  .btn-judge-green,
+  .btn-judge-outline {
+    padding: 12px 18px;
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+  }
+}
+
+/* Very Small Mobile Screens (<= 380px, e.g. iPhone SE, small Androids) */
+@media (max-width: 380px) {
+  .judge-section {
+    padding: 16px 10px 50px;
+  }
+
+  .judge-card {
+    padding: 36px 14px;
+    border-radius: 8px;
+  }
+
+  .judge-title {
+    font-size: 1.35rem;
+    line-height: 1.22;
+    margin-bottom: 12px;
+  }
+
+  .judge-desc {
+    font-size: 0.8rem;
+    line-height: 1.45;
+    margin-bottom: 20px;
+  }
+
+  .btn-judge-green,
+  .btn-judge-outline {
+    padding: 11px 14px;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+  }
+}
