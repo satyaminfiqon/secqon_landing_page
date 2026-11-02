@@ -1,8 +1,8 @@
 /**
  * Stages Section Scroll & Animation Controller
  * Ultra-smooth continuous card deck slide & size reduction engine.
- * - Current card reduces in size (scale 1.0 -> 0.76) and moves upward (0px -> -90px).
- * - Next card glides upward from below (100% -> 0%) and expands into full size.
+ * - Desktop: Smooth continuous scroll-driven card transition.
+ * - Mobile: Flow layout with horizontal touch swipe & dot navigation (no blank space below).
  * - Physics-based LERP interpolation on requestAnimationFrame for silky 60/120fps motion.
  */
 
@@ -10,6 +10,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     const scrollWrapper = document.querySelector('.stages-scroll-wrapper');
     const stagePanels = Array.from(document.querySelectorAll('.stage-panel'));
+    const mobileDots = Array.from(document.querySelectorAll('.stage-dot'));
 
     if (!scrollWrapper || stagePanels.length === 0) return;
 
@@ -19,6 +20,7 @@
     let targetProgress = 0;   // Target progress: 0.0 to 3.0
     let currentProgress = 0;  // Smoothly interpolated progress
     let isAnimating = false;
+    let activeDotIndex = 0;
 
     // S-curve with smooth acceleration and deceleration
     function smootherstep(t) {
@@ -50,16 +52,32 @@
       return stage + easedFrac;
     }
 
+    function updateMobileDots(p) {
+      if (mobileDots.length === 0) return;
+      const newActive = Math.max(0, Math.min(maxProgress, Math.round(p)));
+      if (newActive !== activeDotIndex) {
+        activeDotIndex = newActive;
+        mobileDots.forEach((dot, idx) => {
+          if (idx === activeDotIndex) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+      }
+    }
+
     // Apply exact 3D transforms & opacities based on smooth progress
     function applyTransforms(p) {
       stagePanels.forEach((panel, i) => {
         const rel = p - i;
+        const maxLift = Math.min(90, Math.round((panel.offsetHeight || 380) * 0.2) || 70);
 
         if (rel >= 0) {
           // Card i is currently in view or has been scrolled past (exiting/passed)
           if (rel >= 1.0) {
             // Completely passed
-            panel.style.transform = 'translate3d(0, -90px, 0) scale(0.76)';
+            panel.style.transform = `translate3d(0, -${maxLift}px, 0) scale(0.76)`;
             panel.style.opacity = '0';
             panel.style.visibility = 'hidden';
             panel.style.pointerEvents = 'none';
@@ -68,7 +86,7 @@
             // In active view or smoothly shrinking & lifting (rel from 0.0 to 1.0)
             const t = rel;
             const scale = 1.0 - t * 0.24; // Visibly reduces size down to 0.76!
-            const translateY = -t * 90;   // Moves upward by 90px
+            const translateY = -t * maxLift; // Proportional upward translation based on card height
             const opacity = Math.max(0, 1.0 - t * 1.15); // Smooth fade out
 
             panel.style.transform = `translate3d(0, ${translateY.toFixed(2)}px, 0) scale(${scale.toFixed(3)})`;
@@ -101,6 +119,8 @@
           }
         }
       });
+
+      updateMobileDots(p);
     }
 
     // Animation LERP loop (runs smoothly on requestAnimationFrame)
@@ -134,22 +154,53 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
 
-    // Touch swipe support for mobile
+    function scrollToStage(stageIndex) {
+      const scrollDistance = scrollWrapper.offsetHeight - window.innerHeight;
+      if (scrollDistance <= 0) return;
+      const wrapperTop = window.pageYOffset + scrollWrapper.getBoundingClientRect().top;
+      const targetScroll = wrapperTop + (stageIndex / maxProgress) * scrollDistance;
+      window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    }
+
+    // Mobile dot tap navigation
+    mobileDots.forEach((dot, idx) => {
+      dot.addEventListener('click', (e) => {
+        e.preventDefault();
+        targetProgress = idx;
+        wakeAnimation();
+        scrollToStage(idx);
+      });
+    });
+
+    // Mobile horizontal touch swipe support
+    let touchStartX = 0;
     let touchStartY = 0;
+
     scrollWrapper.addEventListener('touchstart', (e) => {
+      if (!e.touches || e.touches.length === 0) return;
+      touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
     }, { passive: true });
 
     scrollWrapper.addEventListener('touchend', (e) => {
-      const touchEndY = e.changedTouches[0].clientY;
-      const diffY = touchStartY - touchEndY;
-      if (Math.abs(diffY) > 40) {
-        if (diffY > 0 && targetProgress < maxProgress) {
-          targetProgress = Math.min(maxProgress, Math.floor(targetProgress + 1));
+      if (!e.changedTouches || e.changedTouches.length === 0) return;
+      const diffX = touchStartX - e.changedTouches[0].clientX;
+      const diffY = touchStartY - e.changedTouches[0].clientY;
+
+      // Only respond to horizontal swipes (horizontal movement > 35px and dominant over vertical)
+      if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY) * 1.2) {
+        if (diffX > 0 && targetProgress < maxProgress) {
+          // Swipe left -> next stage
+          const nextStage = Math.min(maxProgress, Math.round(targetProgress + 1));
+          targetProgress = nextStage;
           wakeAnimation();
-        } else if (diffY < 0 && targetProgress > 0) {
-          targetProgress = Math.max(0, Math.ceil(targetProgress - 1));
+          scrollToStage(nextStage);
+        } else if (diffX < 0 && targetProgress > 0) {
+          // Swipe right -> previous stage
+          const prevStage = Math.max(0, Math.round(targetProgress - 1));
+          targetProgress = prevStage;
           wakeAnimation();
+          scrollToStage(prevStage);
         }
       }
     }, { passive: true });

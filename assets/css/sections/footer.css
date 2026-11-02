@@ -1,0 +1,385 @@
+/* ==========================================================================
+   Site Footer
+   - 4-column layout: Brand info, Product, Resources, Company
+   - SECQON logo + NVIDIA Inception Program badge
+   - Bottom bar with copyright and X, LinkedIn, GitHub social icons
+   - Fully responsive across all devices (Desktop, Tablet, Mobile)
+   ========================================================================== */
+
+.site-footer {
+  position: relative;
+  width: 100%;
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  border-top: 1px solid rgba(79, 169, 81, 0.35);
+  padding: 80px 0 45px;
+  overflow: hidden;
+  z-index: 20;
+}
+
+/* Subtle top glow line */
+.site-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(79, 169, 81, 0.8) 50%, transparent);
+  pointer-events: none;
+}
+
+.footer-container {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* --------------------------------------------------------------------------
+   Upper Footer Grid (4 Columns on Desktop)
+   -------------------------------------------------------------------------- */
+.footer-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 2.2fr) repeat(3, minmax(140px, 1fr));
+  gap: 56px;
+  align-items: flex-start;
+}
+
+/* Column 1: Brand & Partner Lockup */
+.footer-brand-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 180px;
+}
+
+.footer-logo-group {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  transition: opacity var(--transition-fast);
+}
+
+.footer-logo:hover {
+  opacity: 0.9;
+}
+
+.footer-logo-img {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
+/* NVIDIA Inception Partner Badge */
+.footer-partner-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.footer-partner-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.footer-partner-img {
+  height: 32px;
+  width: auto;
+  display: block;
+}
+
+.footer-product-by {
+  font-size: 0.92rem;
+  color: #94a3b8;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.footer-infiqon-link {
+  color: #2563eb;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--transition-fast);
+}
+
+.footer-infiqon-link:hover {
+  color: #3b82f6;
+}
+
+/* Columns 2, 3, 4: Nav Links */
+.footer-links-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-col-title {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin-bottom: 22px;
+}
+
+.footer-links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.footer-link {
+  font-size: 0.92rem;
+  color: #94a3b8;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+  display: inline-block;
+  line-height: 1.4;
+  padding: 2px 0;
+}
+
+.footer-link:hover {
+  color: #ffffff;
+  transform: translateX(2px);
+}
+
+/* --------------------------------------------------------------------------
+   Bottom Footer Bar
+   -------------------------------------------------------------------------- */
+.footer-bottom-divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.08);
+  margin: 64px 0 28px;
+}
+
+.footer-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footer-copyright {
+  font-size: 0.86rem;
+  color: #64748b;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Social Media Icon Buttons */
+.footer-socials {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-social-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  background: rgba(14, 22, 35, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  transition: all var(--transition-fast);
+}
+
+.footer-social-btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.footer-social-btn:hover {
+  color: #ffffff;
+  border-color: rgba(79, 169, 81, 0.6);
+  background: rgba(79, 169, 81, 0.12);
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(79, 169, 81, 0.2);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+
+/* Laptops / Smaller Desktops (993px - 1200px) */
+@media (max-width: 1200px) {
+  .footer-container {
+    padding: 0 32px;
+  }
+
+  .footer-grid {
+    grid-template-columns: minmax(260px, 1.8fr) repeat(3, minmax(130px, 1fr));
+    gap: 36px;
+  }
+
+  .footer-brand-col {
+    min-height: 170px;
+  }
+}
+
+/* Tablet (641px - 992px) */
+@media (max-width: 992px) {
+  .site-footer {
+    padding: 64px 0 38px;
+  }
+
+  .footer-container {
+    padding: 0 28px;
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 38px 28px;
+  }
+
+  .footer-brand-col {
+    grid-column: 1 / -1;
+    min-height: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding-bottom: 26px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .footer-bottom-divider {
+    margin: 48px 0 26px;
+  }
+}
+
+/* Mobile Devices (<= 640px) */
+@media (max-width: 640px) {
+  .site-footer {
+    padding: 48px 0 32px;
+  }
+
+  .footer-container {
+    padding: 0 20px;
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px 18px;
+  }
+
+  .footer-brand-col {
+    grid-column: 1 / -1;
+    min-height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .footer-logo-group {
+    gap: 14px;
+  }
+
+  .footer-logo-img {
+    height: 26px;
+  }
+
+  .footer-partner-img {
+    height: 30px;
+  }
+
+  .footer-product-by {
+    font-size: 0.88rem;
+  }
+
+  .footer-col-title {
+    font-size: 0.82rem;
+    margin-bottom: 16px;
+    letter-spacing: 0.1em;
+  }
+
+  .footer-links-list {
+    gap: 12px;
+  }
+
+  .footer-link {
+    font-size: 0.88rem;
+    padding: 3px 0;
+  }
+
+  .footer-bottom-divider {
+    margin: 36px 0 22px;
+  }
+
+  .footer-bottom-bar {
+    flex-direction: column-reverse;
+    align-items: center;
+    text-align: center;
+    gap: 18px;
+  }
+
+  .footer-socials {
+    justify-content: center;
+    width: 100%;
+    gap: 14px;
+  }
+
+  .footer-social-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .footer-copyright {
+    text-align: center;
+    width: 100%;
+    font-size: 0.82rem;
+    color: #64748b;
+  }
+}
+
+/* Small Mobile Phones (<= 400px) */
+@media (max-width: 400px) {
+  .footer-container {
+    padding: 0 16px;
+  }
+
+  .footer-grid {
+    gap: 28px 14px;
+  }
+
+  .footer-logo-img {
+    height: 24px;
+  }
+
+  .footer-partner-img {
+    height: 27px;
+  }
+
+  .footer-logo-group {
+    gap: 10px;
+  }
+
+  .footer-col-title {
+    font-size: 0.78rem;
+  }
+
+  .footer-link {
+    font-size: 0.84rem;
+  }
+}

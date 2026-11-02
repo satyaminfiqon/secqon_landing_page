@@ -1,21 +1,22 @@
 /* ==========================================================================
    Security Section ("You are letting a machine test your production systems")
-   Split-screen sticky showcase: Left image is fixed, right text scrolls.
-   As new text enters display, the image scrolls up to show that section's image.
+   Split-screen sticky showcase: Left image is fixed at full screen height,
+   right text scrolls. As new text enters display, the image track slides
+   to reveal that section's image.
    ========================================================================== */
 
 .security-section {
-  --sec-visual-width: 690px;
-  --sec-visual-height: 558px;
+  --sec-visual-width: min(calc(100vh * (648 / 577)), 55vw);
   position: relative;
   width: 100%;
   background-color: var(--bg-dark);
   color: var(--text-primary);
-  padding: 27px 0 140px;
+  padding: 60px 0 140px;
   z-index: 22;
 }
 
 .security-container {
+  max-width: 1720px;
   margin: 0 auto;
 }
 
@@ -24,7 +25,6 @@
   text-align: center;
   max-width: 820px;
   margin: 0 auto 64px;
-  /* padding: 0 20px; */
 }
 
 .security-title {
@@ -49,36 +49,39 @@
 /* 2-Column Split Layout */
 .security-sticky-showcase {
   display: grid;
-  grid-template-columns: minmax(550px, var(--sec-visual-width)) 1fr;
-  gap: 48px;
+  grid-template-columns: var(--sec-visual-width) 1fr;
+  gap: clamp(36px, 4vw, 64px);
   align-items: flex-start;
   position: relative;
   width: 100%;
 }
 
 /* --------------------------------------------------------------------------
-   Left Column: Sticky Fixed Image Viewer
+   Left Column: Sticky Fixed Image Viewer (Full Screen Height, Never Cropped)
    -------------------------------------------------------------------------- */
 .security-visual-col {
   position: sticky;
-  top: max(80px, calc(50vh - (var(--sec-visual-height) / 2)));
+  top: 0;
   width: 100%;
   max-width: var(--sec-visual-width);
-  height: var(--sec-visual-height);
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   z-index: 10;
 }
 
 .security-image-frame {
   width: 100%;
-  max-width: var(--sec-visual-width);
-  height: var(--sec-visual-height);
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   position: relative;
   display: flex;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
 }
 
 /* Vertical Image Sliding Track */
@@ -93,23 +96,28 @@
 
 .sec-image-slide {
   width: 100%;
-  height: 100%;
-  min-height: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   padding: 0;
+  overflow: hidden;
 }
 
 .sec-image-slide img {
   width: 100%;
   height: 100%;
-  max-width: var(--sec-visual-width);
-  max-height: var(--sec-visual-height);
+  max-width: 100%;
+  max-height: 100vh;
+  max-height: 100dvh;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
   display: block;
+  border-radius: 18px;
   filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.5));
 }
 
@@ -124,8 +132,10 @@
 }
 
 .security-text-step {
-  height: var(--sec-visual-height);
-  min-height: var(--sec-visual-height);
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -191,107 +201,372 @@
   max-width: 500px;
 }
 
-/* --------------------------------------------------------------------------
-   Responsive Layouts
-   -------------------------------------------------------------------------- */
-@media (max-width: 1200px) {
-  .security-section {
-    --sec-visual-width: 620px;
-    --sec-visual-height: 550px;
-  }
-
-  .security-sticky-showcase {
-    grid-template-columns: minmax(460px, var(--sec-visual-width)) 1fr;
-    gap: 36px;
-  }
-
-  .security-visual-col,
-  .security-image-frame {
-    height: var(--sec-visual-height);
-  }
-
-  .security-visual-col {
-    top: max(80px, calc(50vh - (var(--sec-visual-height) / 2)));
-  }
-
-  .security-text-step {
-    height: var(--sec-visual-height);
-    min-height: var(--sec-visual-height);
-  }
+/* Hide mobile deck on desktop by default */
+.security-mobile-scroll-wrapper {
+  display: none;
 }
 
-@media (max-width: 960px) {
+/* --------------------------------------------------------------------------
+   Responsive Layouts: Tablet & Small Desktop (1000px to 1300px)
+   Image is displayed accurately with correct aspect ratio, zero side cropping,
+   and balanced two-column proportion.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1300px) and (min-width: 993px) {
+  .security-section {
+    --sec-visual-width: min(calc(88vh * (648 / 577)), 49vw);
+    padding: 50px 0 110px;
+  }
+
   .security-sticky-showcase {
-    grid-template-columns: 1fr;
-    gap: 30px;
+    grid-template-columns: var(--sec-visual-width) 1fr;
+    gap: clamp(24px, 3.2vw, 42px);
   }
 
   .security-visual-col {
-    position: sticky;
-    top: 76px;
-    height: 300px;
-    max-width: 100%;
-    z-index: 30;
-    margin-bottom: 20px;
-  }
-
-  .security-image-frame {
-    height: 300px;
-    max-width: 100%;
-  }
-
-  .sec-image-slide {
-    justify-content: center;
-    padding: 10px;
+    max-width: var(--sec-visual-width);
   }
 
   .sec-image-slide img {
+    object-fit: contain;
     object-position: center;
-    max-height: 300px;
-  }
-
-  .security-text-col {
-    padding: 0 0 80px;
-  }
-
-  .security-text-step {
-    height: auto;
-    min-height: auto;
-    padding: 30px 0;
-    margin-bottom: 40px;
-  }
-
-  .security-card-number {
-    position: static;
-    font-size: 2.8rem;
-    margin-bottom: 14px;
-  }
-}
-
-@media (max-width: 640px) {
-  .security-section {
-    padding: 80px 0 100px;
-  }
-
-  .security-visual-col {
-    height: 240px;
-  }
-
-  .security-image-frame {
-    height: 240px;
-  }
-
-  .sec-image-slide {
-    padding: 8px;
-  }
-
-  .security-card-number {
-    font-size: 2.8rem;
-    margin-bottom: 14px;
+    max-height: 100vh;
+    max-height: 100dvh;
+    width: 100%;
+    /* height: auto; */
   }
 
   .security-card-heading {
-    font-size: 1.4rem;
-    margin-bottom: 12px;
+    font-size: clamp(1.52rem, 2.2vw, 1.95rem);
+    line-height: 1.24;
+    margin-bottom: 14px;
+    max-width: 100%;
+  }
+
+  .security-card-desc {
+    font-size: 0.91rem;
+    line-height: 1.6;
+    max-width: 100%;
+  }
+
+  .security-card-number {
+    font-size: clamp(3.2rem, 4.6vw, 4.2rem);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Mobile & Tablet Deck Scroll System (<= 992px)
+   - Image full screen width on top
+   - Content directly below image (UI same as desktop, no card box)
+   - Deck transition animation like card in staging section
+   - Zero unnecessary blank space below content
+   -------------------------------------------------------------------------- */
+@media (max-width: 992px) {
+  .security-section {
+    padding: 0;
+    overflow: visible;
+  }
+
+  /* Hide Desktop Split View */
+  .security-section .security-container {
+    display: none !important;
+  }
+
+  /* Show Mobile Deck Scroll Wrapper */
+  .security-mobile-scroll-wrapper {
+    display: block;
+    position: relative;
+    height: 300vh; /* Smooth, compact scroll track for 6 slides */
+    width: 100%;
+    overflow: visible;
+  }
+
+  .security-mobile-sticky-container {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(6px, 1.5vh, 16px) 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    z-index: 10;
+    width: 100%;
+  }
+
+  .security-mobile-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+  }
+
+  /* Mobile Header */
+  .security-mobile-header {
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 clamp(6px, 1.2vh, 12px);
+    padding: 0 clamp(16px, 4.5vw, 24px);
+    box-sizing: border-box;
+  }
+
+  .security-mobile-header .security-title {
+    font-size: clamp(1.22rem, min(5.2vw, 3.2vh), 1.85rem);
+    line-height: 1.18;
+    margin-bottom: 4px;
+    letter-spacing: -0.025em;
+    color: #ffffff;
+  }
+
+  .security-mobile-header .security-subtitle {
+    font-size: clamp(0.72rem, 2.1vw, 0.82rem);
+    line-height: 1.35;
+    max-width: 100%;
+    color: #8c9bb0;
+    margin: 10px 0;
+  }
+
+  /* Mobile Deck Viewport Container - Proportionately fills viewport height */
+  .security-mobile-card-container {
+    position: relative;
+    width: 100%;
+    height: clamp(380px, 60vh, 480px);
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Each Slide in the Deck - Clean UI (no card box, same as desktop) */
+  .security-deck-card {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    gap: clamp(6px, 1.2vh, 12px);
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+    transform-origin: center center;
+    will-change: transform, opacity;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    box-sizing: border-box;
+  }
+
+  .security-deck-card.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  /* Part 1: Full-Width Image on Top (Generous responsive height, zero empty bands) */
+  .sec-card-media {
+    width: 100%;
+    height: clamp(210px, 34vh, 290px);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .sec-card-media img {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    border-radius: 0;
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.6));
+  }
+
+  /* Part 2: Content Directly Below Image (Clean typography, compact margins) */
+  .sec-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    width: 100%;
+    padding: 0 clamp(16px, 4.5vw, 24px);
+    box-sizing: border-box;
+  }
+
+  .sec-card-number {
+    font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+    font-size: clamp(2rem, 5vw, 2.6rem);
+    font-weight: 800;
+    color: #4fa951;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 3px;
+  }
+
+  .sec-card-info {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .sec-card-heading {
+    font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+    font-size: clamp(1.12rem, 3.6vw, 1.4rem);
+    font-weight: 600;
+    line-height: 1.25;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+  }
+
+  .sec-card-desc {
+    font-size: clamp(0.82rem, 2.3vw, 0.9rem);
+    line-height: 1.52;
+    color: #8c9bb0;
+    margin: 0;
+    font-weight: 400;
+    max-width: 100%;
+  }
+
+  /* Synchronized Mobile Dots Pagination (if present) */
+  .security-mobile-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 0 clamp(16px, 4.5vw, 24px);
+    box-sizing: border-box;
+    margin-top: clamp(6px, 1.2vh, 10px);
+  }
+
+  .sec-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.22);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .sec-dot.active {
+    width: 24px;
+    background: #4fa951;
+    box-shadow: 0 0 10px rgba(79, 169, 81, 0.5);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Small Mobile Screens (<= 480px, e.g. iPhone, Pixel)
+   -------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .security-mobile-card-container {
+    height: clamp(350px, 58vh, 440px);
+  }
+
+  .sec-card-media {
+    height: clamp(180px, 32vh, 250px);
+  }
+
+  .sec-card-number {
+    font-size: 1.85rem;
+    margin-bottom: 2px;
+  }
+
+  .sec-card-heading {
+    font-size: 1.05rem;
+    line-height: 1.22;
+    margin-bottom: 4px;
+  }
+
+  .sec-card-desc {
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Very Small Screens (<= 380px, e.g. iPhone SE)
+   -------------------------------------------------------------------------- */
+@media (max-width: 380px) {
+  .security-mobile-card-container {
+    height: clamp(320px, 56vh, 390px);
+  }
+
+  .sec-card-media {
+    height: clamp(160px, 28vh, 210px);
+  }
+
+  .sec-card-number {
+    font-size: 1.6rem;
+    margin-bottom: 2px;
+  }
+
+  .sec-card-heading {
+    font-size: 0.95rem;
+    margin-bottom: 3px;
+  }
+
+  .sec-card-desc {
+    font-size: 0.72rem;
+    line-height: 1.4;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Short Viewport Height Optimization (<= 640px height in landscape / short phones)
+   -------------------------------------------------------------------------- */
+@media (max-height: 640px) and (max-width: 992px) {
+  .security-mobile-header {
+    margin-bottom: 3px;
+  }
+
+  .security-mobile-header .security-title {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+  }
+
+
+  .security-mobile-card-container {
+    height: clamp(260px, 64vh, 330px);
+  }
+
+  .sec-card-media {
+    height: clamp(120px, 28vh, 160px);
+  }
+
+  .sec-card-number {
+    font-size: 1.35rem;
+    margin-bottom: 2px;
+  }
+
+  .sec-card-heading {
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+  }
+
+  .sec-card-desc {
+    font-size: 0.7rem;
+    line-height: 1.32;
   }
 }

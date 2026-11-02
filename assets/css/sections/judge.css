@@ -1,0 +1,348 @@
+/* ==========================================================================
+   Judge Section ("Point it at one domain and judge it on the result")
+   - Framed cyber CTA banner with glowing borders
+   - High-fidelity background artwork with green aurora light bursts
+   - Fully responsive across all device breakpoints (Desktop, Tablet, Mobile)
+   ========================================================================== */
+
+.judge-section {
+  position: relative;
+  width: 100%;
+  background-color: var(--bg-dark);
+  padding: 40px 24px 110px;
+  overflow: hidden;
+  z-index: 24;
+}
+
+.judge-container {
+  max-width: 1260px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Framed Cyber Card / Banner */
+.judge-card {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 14px;
+  border: 1px solid rgba(79, 169, 81, 0.35);
+  background-color: #020408;
+  background-image: url('../../images/juge_section_Background.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  padding: 85px 44px;
+  text-align: center;
+  overflow: hidden;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 35px rgba(79, 169, 81, 0.08);
+}
+
+/* Glowing Top & Bottom Horizontal Neon Accent Lines */
+.judge-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(79, 169, 81, 0.85) 50%, transparent);
+  pointer-events: none;
+  z-index: 6;
+}
+
+.judge-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(79, 169, 81, 0.6) 50%, transparent);
+  pointer-events: none;
+  z-index: 6;
+}
+
+/* --------------------------------------------------------------------------
+   Center Content Block
+   -------------------------------------------------------------------------- */
+.judge-content {
+  position: relative;
+  z-index: 5;
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.judge-title {
+  font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+  font-size: clamp(2rem, 3.4vw, 2.85rem);
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  margin: 0 auto 20px;
+  text-wrap: balance;
+  word-break: break-word;
+}
+
+.judge-desc {
+  font-size: 1.02rem;
+  line-height: 1.64;
+  color: #94a3b8;
+  max-width: 640px;
+  margin: 0 auto 38px;
+  font-weight: 400;
+  word-break: break-word;
+}
+
+/* Actions Group */
+.judge-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-judge-green {
+  background-color: #4fa951;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 13px 28px;
+  border-radius: 6px;
+  border: 1px solid #4fa951;
+  font-size: 0.88rem;
+  letter-spacing: 0.04em;
+  box-shadow: 0 4px 18px rgba(79, 169, 81, 0.35);
+  transition: all var(--transition-normal, 0.25s ease);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.btn-judge-green:hover {
+  background-color: #3eb544;
+  border-color: #3eb544;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(79, 169, 81, 0.5);
+  color: #ffffff;
+}
+
+.btn-judge-outline {
+  background-color: rgba(6, 12, 20, 0.7);
+  color: #ffffff;
+  font-weight: 500;
+  padding: 13px 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(79, 169, 81, 0.45);
+  font-size: 0.88rem;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all var(--transition-normal, 0.25s ease);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.btn-judge-outline:hover {
+  border-color: rgba(79, 169, 81, 0.8);
+  background-color: rgba(79, 169, 81, 0.14);
+  transform: translateY(-1px);
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+
+/* Laptops & Small Desktops (993px to 1200px) */
+@media (max-width: 1200px) and (min-width: 993px) {
+  .judge-section {
+    padding: 35px 24px 95px;
+  }
+
+  .judge-card {
+    padding: 75px 36px;
+  }
+
+  .judge-title {
+    font-size: clamp(1.85rem, 2.8vw, 2.4rem);
+    margin-bottom: 18px;
+  }
+
+  .judge-desc {
+    font-size: 0.98rem;
+    margin-bottom: 32px;
+  }
+}
+
+/* Tablets (769px to 992px) */
+@media (max-width: 992px) and (min-width: 769px) {
+  .judge-section {
+    padding: 30px 20px 85px;
+  }
+
+  .judge-card {
+    padding: 64px 28px;
+    background-size: cover;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../../images/juge_section_Background.png');
+  }
+
+  .judge-title {
+    font-size: clamp(1.75rem, 3.2vw, 2.2rem);
+    margin-bottom: 16px;
+  }
+
+  .judge-desc {
+    font-size: 0.94rem;
+    line-height: 1.58;
+    max-width: 580px;
+    margin-bottom: 30px;
+  }
+
+  .judge-actions {
+    gap: 14px;
+  }
+}
+
+/* Small Tablets & Phablets (577px to 768px) */
+@media (max-width: 768px) {
+  .judge-section {
+    padding: 24px 16px 75px;
+  }
+
+  .judge-card {
+    padding: 50px 24px;
+    background-size: 100% 100%;
+    border-radius: 12px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('../../images/juge_section_Background.png');
+  }
+
+  .judge-card::before {
+    left: 10%;
+    right: 10%;
+  }
+
+  .judge-card::after {
+    left: 14%;
+    right: 14%;
+  }
+
+  .judge-title {
+    font-size: clamp(1.65rem, 4.6vw, 2rem);
+    line-height: 1.22;
+    margin-bottom: 16px;
+  }
+
+  .judge-desc {
+    font-size: 0.92rem;
+    line-height: 1.56;
+    max-width: 520px;
+    margin-bottom: 28px;
+  }
+
+  .judge-desc-br {
+    display: none;
+  }
+
+  .judge-actions {
+    flex-direction: column;
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+    gap: 12px;
+  }
+
+  .btn-judge-green,
+  .btn-judge-outline {
+    width: 100%;
+    padding: 13px 20px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Standard Mobile Screens (381px to 576px, e.g. iPhone 14/15/16, Pixel, Galaxy) */
+@media (max-width: 576px) {
+  .judge-section {
+    padding: 20px 14px 65px;
+  }
+
+  .judge-card {
+    padding: 44px 18px;
+    background-size: 100% 100%;
+    border-radius: 10px;
+  }
+
+  .judge-card::before {
+    left: 6%;
+    right: 6%;
+  }
+
+  .judge-card::after {
+    left: 10%;
+    right: 10%;
+  }
+
+  .judge-title {
+    font-size: clamp(1.48rem, 5.8vw, 1.8rem);
+    line-height: 1.22;
+    margin-bottom: 14px;
+  }
+
+  .judge-desc {
+    font-size: 0.88rem;
+    line-height: 1.52;
+    margin-bottom: 24px;
+  }
+
+  .judge-actions {
+    max-width: 100%;
+    gap: 10px;
+  }
+
+  .btn-judge-green,
+  .btn-judge-outline {
+    padding: 12px 18px;
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+  }
+}
+
+/* Very Small Mobile Screens (<= 380px, e.g. iPhone SE, small Androids) */
+@media (max-width: 380px) {
+  .judge-section {
+    padding: 16px 10px 50px;
+  }
+
+  .judge-card {
+    padding: 36px 14px;
+    border-radius: 8px;
+  }
+
+  .judge-title {
+    font-size: 1.35rem;
+    line-height: 1.22;
+    margin-bottom: 12px;
+  }
+
+  .judge-desc {
+    font-size: 0.8rem;
+    line-height: 1.45;
+    margin-bottom: 20px;
+  }
+
+  .btn-judge-green,
+  .btn-judge-outline {
+    padding: 11px 14px;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+  }
+}

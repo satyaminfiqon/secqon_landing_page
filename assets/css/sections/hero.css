@@ -172,3 +172,9 @@
     width: 100%;
   }
 }
+@media (max-width: 350px) {
+  .hero-section {
+    padding: 100px 0 80px;
+    min-height: calc(100vh - 75px);
+  }
+}

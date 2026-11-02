@@ -68,7 +68,7 @@
    Billing Cycle Toggle (Monthly / Annual + Save 17%)
    -------------------------------------------------------------------------- */
 .billing-toggle-container {
-  font-family: "JetBrains Mono";
+  font-family: var(--font-display);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -173,12 +173,15 @@
 
 /* Popular Card (GROWTH) */
 .pricing-card.is-popular {
-  background: radial-gradient(ellipse 95% 70% at 50% 32%,
-      rgba(35, 85, 165, 0.28) 0%,
-      rgba(9, 21, 44, 0.85) 75%),
+
+  background:
+    radial-gradient(ellipse 95% 70% at 50% 32%,
+      rgba(35, 85, 165, 0.15) 0%,
+      rgba(9, 21, 44, 0.45) 75%),
     linear-gradient(180deg,
-      #051a3d 0%,
-      #09152b 100%);
+      rgba(59, 130, 246, 0.12) 6%,
+      rgba(10, 16, 32, 0.55) 75%);
+
   border: 1px solid #4fa951;
   box-shadow: 0 0 32px rgba(79, 169, 81, 0.16), 0 0 50px rgba(16, 55, 120, 0.25);
 }
@@ -207,7 +210,7 @@
 
 /* Plan Header Category Tags */
 .plan-category-tag {
-  font-family: "JetBrains Mono";
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 3px;
@@ -250,8 +253,7 @@
 }
 
 .plan-price-amount {
-  /* font-family: var(--font-display); */
-  font-family: "JetBrains Mono";
+  font-family: var(--font-display);
   font-size: 2.75rem;
   font-weight: 700;
   line-height: 1;
@@ -310,7 +312,6 @@
 }
 
 .feature-chevron {
-  font-family: monospace, var(--font-main);
   font-size: 0.88rem;
   font-weight: 700;
   color: var(--accent-green);
@@ -462,8 +463,12 @@
 }
 
 @media (max-width: 768px) {
+  .pricing-container {
+    padding: 20px 28px;
+  }
+
   .pricing-section {
-    padding: 80px 0 100px;
+    padding: 10px 0 5px;
   }
 
   .pricing-grid {

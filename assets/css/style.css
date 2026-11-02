@@ -8,7 +8,10 @@
 @import url('./sections/stages.css');
 @import url('./sections/security.css');
 @import url('./sections/pricing.css');
+@import url('./sections/evidence.css');
+@import url('./sections/judge.css');
 @import url('./sections/proves.css');
+@import url('./sections/footer.css');
 
 /* CSS Variables & Design Tokens */
 :root {
