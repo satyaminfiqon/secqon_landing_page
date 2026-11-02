@@ -1,0 +1,788 @@
+/* ==========================================================================
+   Evidence Section ("The Output is the Product / Evidence that speaks for itself")
+   - Synchronized card deck shuffle on scroll / click
+   - Dynamic callout tooltip and active radio-dot heading highlights
+   - Dark translucent glassmorphism multi-card stack with 3D depth
+   ========================================================================== */
+
+.evidence-section {
+  position: relative;
+  width: 100%;
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  overflow: visible;
+  z-index: 23;
+}
+
+/* Background ambient lighting */
+.evidence-section::before {
+  content: '';
+  position: absolute;
+  top: 40%;
+  right: 15%;
+  width: 700px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(4, 82, 190, 0.18) 0%, rgba(79, 169, 81, 0.12) 40%, transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Long scroll track for smooth pinning */
+.evidence-scroll-track {
+  position: relative;
+  width: 100%;
+  height: 380vh; /* Smooth, natural scroll space for 5 cards */
+}
+
+/* Pinned sticky presentation container */
+.evidence-sticky-wrapper {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.evidence-container {
+  display: grid;
+  grid-template-columns: minmax(460px, 580px) minmax(420px, 560px);
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+  width: 100%;
+  max-width: 1380px;
+  padding: 0 40px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 3;
+}
+
+/* --------------------------------------------------------------------------
+   Left Column: Content, Points & Tooltip
+   -------------------------------------------------------------------------- */
+.evidence-content-col {
+  position: relative;
+  z-index: 10;
+  max-width: 580px;
+}
+
+.evidence-eyebrow {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #7e8b9b;
+  margin-bottom: 22px;
+}
+
+.evidence-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 4.2vw, 3.8rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.028em;
+  color: #ffffff;
+  margin-bottom: 24px;
+}
+
+.evidence-desc {
+  font-size: 0.98rem;
+  line-height: 1.66;
+  color: #8c9bb0;
+  margin-bottom: 38px;
+  font-weight: 400;
+}
+
+/* --------------------------------------------------------------------------
+   Points List with Custom Target Radio Indicator
+   -------------------------------------------------------------------------- */
+.evidence-points-wrapper {
+  position: relative;
+  margin-bottom: 46px;
+}
+
+.evidence-points-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: relative;
+}
+
+.evidence-point-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  padding: 4px 0;
+  position: relative;
+  user-select: none;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-family: inherit;
+  transition: all 0.25s ease;
+  width: fit-content;
+}
+
+/* Target Dot / Radio Outer Ring */
+.point-radio {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.8px solid rgba(255, 255, 255, 0.26);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(14, 20, 32, 0.6);
+}
+
+/* Target Inner Dot */
+.point-radio::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.point-label {
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: #8c9bb0;
+  transition: color 0.25s ease, transform 0.25s ease;
+  letter-spacing: -0.01em;
+}
+
+.evidence-point-item:hover .point-label {
+  color: #ffffff;
+}
+
+.evidence-point-item:hover .point-radio {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Active Highlight (Green Accent Matching Image) */
+.evidence-point-item.active .point-radio {
+  border-color: #4fa951;
+  box-shadow: 0 0 14px rgba(79, 169, 81, 0.45);
+}
+
+.evidence-point-item.active .point-radio::after {
+  background-color: #4fa951;
+  border-color: #4fa951;
+  transform: scale(1.15);
+}
+
+.evidence-point-item.active .point-label {
+  color: #4fa951;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   Connected Callout Tooltip & SVG Connector Line
+   -------------------------------------------------------------------------- */
+.evidence-callout-container {
+  position: absolute;
+  left: 276px;
+  top: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
+  z-index: 15;
+}
+
+.evidence-callout-svg {
+  width: 58px;
+  height: 48px;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.evidence-callout-path {
+  fill: none;
+  stroke: #4fa951;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.evidence-callout-box {
+  background: rgba(14, 38, 22, 0.92);
+  border: 1px solid rgba(79, 169, 81, 0.5);
+  border-radius: 8px;
+  padding: 12px 18px;
+  max-width: 250px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 18px rgba(79, 169, 81, 0.16);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  margin-left: 2px;
+}
+
+.evidence-callout-text {
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: #bbf7d0;
+  font-weight: 400;
+  display: block;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* --------------------------------------------------------------------------
+   Actions / CTA Buttons
+   -------------------------------------------------------------------------- */
+.evidence-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-evidence-buy {
+  background-color: #4fa951;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 13px 28px;
+  border-radius: 6px;
+  border: 1px solid #4fa951;
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+  box-shadow: 0 4px 18px rgba(79, 169, 81, 0.32);
+  transition: all var(--transition-normal);
+}
+
+.btn-evidence-buy:hover {
+  background-color: #3eb544;
+  border-color: #3eb544;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(79, 169, 81, 0.5);
+}
+
+.btn-evidence-sample {
+  background: transparent;
+  color: #ffffff;
+  font-weight: 500;
+  padding: 13px 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(6px);
+}
+
+.btn-evidence-sample:hover {
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   Right Column: 3D Stacked Cards Deck with Shuffle Mechanics
+   -------------------------------------------------------------------------- */
+.evidence-visual-col {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 640px;
+  perspective: 1400px;
+}
+
+.evidence-deck-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 540px;
+  height: 540px;
+  background: radial-gradient(circle, rgba(4, 82, 190, 0.26) 0%, rgba(79, 169, 81, 0.16) 40%, transparent 70%);
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.evidence-cards-deck {
+  position: relative;
+  width: 480px;
+  height: 590px;
+  transform-style: preserve-3d;
+}
+
+/* Individual Stackable Card */
+.evidence-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(150deg, rgba(16, 26, 42, 0.88) 0%, rgba(8, 14, 25, 0.95) 100%);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.75), 0 0 35px rgba(4, 82, 190, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  will-change: transform, opacity;
+  transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.45s ease, box-shadow 0.45s ease;
+  user-select: none;
+  overflow: hidden;
+}
+
+/* If user embeds an image file directly inside the card */
+.evidence-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Subtle corner glossy highlight */
+.evidence-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 110px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 100%);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  pointer-events: none;
+}
+
+/* Card Header */
+.card-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-brand-icon {
+  width: 26px;
+  height: 26px;
+  background: rgba(79, 169, 81, 0.18);
+  border: 1px solid rgba(79, 169, 81, 0.4);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4fa951;
+}
+
+.card-brand-tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7e8b9b;
+  font-weight: 600;
+}
+
+.card-header-meta {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-family: monospace;
+}
+
+/* Card Main Title Block */
+.card-title-group {
+  margin-bottom: 20px;
+}
+
+.card-entity-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.card-entity-sub {
+  font-size: 0.82rem;
+  color: #8c9bb0;
+}
+
+/* Card Score Banner (B+ with Radar Target) */
+.card-score-banner {
+  background: rgba(22, 36, 56, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-score-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #4fa951;
+}
+
+.score-left-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.score-grade {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.score-desc-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.score-desc-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.score-desc-status {
+  font-size: 0.72rem;
+  color: #8c9bb0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Glowing Radar / Concentric Target */
+.score-radar-wrap {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radar-circle-outer {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(4, 82, 190, 0.45);
+}
+
+.radar-circle-inner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(79, 169, 81, 0.55);
+}
+
+.radar-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 10px #38bdf8, 0 0 18px #0452be;
+  animation: radarPulse 2.2s infinite ease-in-out;
+}
+
+@keyframes radarPulse {
+  0%, 100% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
+}
+
+/* Findings List Rows */
+.card-findings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  margin-bottom: 22px;
+}
+
+.card-finding-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  background: rgba(14, 22, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  font-size: 0.84rem;
+  color: #cbd5e1;
+  transition: border-color 0.2s ease;
+}
+
+.card-finding-row:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.finding-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.finding-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #64748b;
+}
+
+.finding-dot.red { background: #ef4444; }
+.finding-dot.amber { background: #f59e0b; }
+.finding-dot.blue { background: #38bdf8; }
+.finding-dot.green { background: #4fa951; }
+
+.finding-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.finding-badge.badge-high {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.finding-badge.badge-med {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.finding-badge.badge-low {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.finding-badge.badge-ok {
+  color: #4fa951;
+  background: rgba(79, 169, 81, 0.12);
+  border: 1px solid rgba(79, 169, 81, 0.35);
+}
+
+/* Card Code/Terminal Snippet (for card 2) */
+.card-code-block {
+  background: #090e18;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: #94a3b8;
+  margin-bottom: 18px;
+}
+
+.code-prompt { color: #38bdf8; }
+.code-kw { color: #4fa951; }
+.code-arg { color: #f1f5f9; }
+.code-out { color: #8c9bb0; opacity: 0.85; margin-top: 6px; }
+
+/* Card Footer Bar */
+.card-footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.72rem;
+  color: #64748b;
+  font-family: monospace;
+}
+
+.card-footer-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #4fa951;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Card Stack Deck Ordering / Fan Angles
+   -------------------------------------------------------------------------- */
+/* Default resting layout for a fan of 5 cards */
+.evidence-card[data-card-index="0"] {
+  transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  z-index: 5;
+  opacity: 1;
+}
+
+.evidence-card[data-card-index="1"] {
+  transform: translate3d(20px, -8px, 0) rotate(5deg) scale(0.98);
+  z-index: 4;
+  opacity: 0.72;
+}
+
+.evidence-card[data-card-index="2"] {
+  transform: translate3d(-18px, -14px, 0) rotate(-4.5deg) scale(0.96);
+  z-index: 3;
+  opacity: 0.52;
+}
+
+.evidence-card[data-card-index="3"] {
+  transform: translate3d(28px, -20px, 0) rotate(7.5deg) scale(0.94);
+  z-index: 2;
+  opacity: 0.32;
+}
+
+.evidence-card[data-card-index="4"] {
+  transform: translate3d(-26px, -24px, 0) rotate(-7deg) scale(0.92);
+  z-index: 1;
+  opacity: 0.18;
+}
+
+/* When a card is shuffling off (discarding to bottom) */
+.evidence-card.shuffling-out {
+  transform: translate3d(120px, -160px, 0) rotate(18deg) scale(0.88) !important;
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Media Queries
+   -------------------------------------------------------------------------- */
+@media (max-width: 1200px) {
+  .evidence-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+    padding: 0 28px;
+  }
+
+  .evidence-cards-deck {
+    width: 420px;
+    height: 540px;
+  }
+
+  .evidence-callout-container {
+    left: 270px;
+  }
+}
+
+@media (max-width: 992px) {
+  .evidence-scroll-track {
+    height: auto;
+  }
+
+  .evidence-sticky-wrapper {
+    position: relative;
+    height: auto;
+    padding: 90px 20px 100px;
+  }
+
+  .evidence-container {
+    grid-template-columns: 1fr;
+    gap: 60px;
+    padding: 0;
+  }
+
+  .evidence-content-col {
+    max-width: 100%;
+  }
+
+  .evidence-callout-container {
+    position: static;
+    margin-top: 20px;
+    margin-bottom: 24px;
+    transform: none !important;
+  }
+
+  .evidence-callout-svg {
+    display: none;
+  }
+
+  .evidence-callout-box {
+    max-width: 100%;
+  }
+
+  .evidence-visual-col {
+    height: 580px;
+    width: 100%;
+  }
+
+  .evidence-cards-deck {
+    width: 100%;
+    max-width: 460px;
+    height: 540px;
+  }
+}
+
+@media (max-width: 640px) {
+  .evidence-title {
+    font-size: 2.1rem;
+  }
+
+  .evidence-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-evidence-buy,
+  .btn-evidence-sample {
+    width: 100%;
+    text-align: center;
+  }
+
+  .evidence-cards-deck {
+    height: 490px;
+  }
+
+  .evidence-card {
+    padding: 22px 18px;
+  }
+
+  .card-entity-title {
+    font-size: 1.35rem;
+  }
+
+  .score-grade {
+    font-size: 1.8rem;
+  }
+}
