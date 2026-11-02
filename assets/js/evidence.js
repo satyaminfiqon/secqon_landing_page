@@ -377,6 +377,13 @@
         card.setAttribute('aria-hidden', card.classList.contains('active') ? 'false' : 'true');
       });
 
+      // Update mobile stepper dots
+      const stepperDots = document.querySelectorAll('.mobile-step-dot');
+      stepperDots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === newStep);
+        dot.setAttribute('aria-current', idx === newStep ? 'true' : 'false');
+      });
+
       // Update callout text & green line
       updateCalloutText(newStep);
       requestAnimationFrame(() => updateGreenLine(newStep));
@@ -413,7 +420,22 @@
     // Attach heading point click handlers
     pointItems.forEach((item, index) => {
       item.addEventListener('click', () => {
-        setActiveStep(index, true);
+        if (window.innerWidth <= 820) {
+          // On mobile view, tapping the active heading advances to next card
+          setActiveStep((currentIndex + 1) % totalSteps, true);
+        } else {
+          setActiveStep(index, true);
+        }
+      });
+    });
+
+    // Attach mobile stepper dot click handlers
+    document.querySelectorAll('.mobile-step-dot').forEach((dot) => {
+      dot.addEventListener('click', (e) => {
+        const step = parseInt(e.currentTarget.getAttribute('data-step'), 10);
+        if (!isNaN(step)) {
+          setActiveStep(step, true);
+        }
       });
     });
 
@@ -435,28 +457,47 @@
       }
     };
 
-    // 8. Mobile touch swipe gesture support
-    if (deckElement) {
+    // 8. Mobile touch swipe gesture support (Swipe Up / Down / Left / Right)
+    const touchArea = document.getElementById('evidenceStickyWrapper') || document.getElementById('report-details') || deckElement;
+
+    if (touchArea) {
       let touchStartX = 0;
       let touchStartY = 0;
+      let touchStartTime = 0;
 
-      deckElement.addEventListener('touchstart', (e) => {
-        if (e.changedTouches && e.changedTouches[0]) {
-          touchStartX = e.changedTouches[0].screenX;
-          touchStartY = e.changedTouches[0].screenY;
+      touchArea.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          touchStartTime = Date.now();
         }
       }, { passive: true });
 
-      deckElement.addEventListener('touchend', (e) => {
+      touchArea.addEventListener('touchend', (e) => {
         if (e.changedTouches && e.changedTouches[0]) {
-          const diffX = e.changedTouches[0].screenX - touchStartX;
-          const diffY = e.changedTouches[0].screenY - touchStartY;
+          const diffX = e.changedTouches[0].clientX - touchStartX;
+          const diffY = e.changedTouches[0].clientY - touchStartY;
+          const duration = Date.now() - touchStartTime;
 
-          if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
-            if (diffX < 0) {
-              setActiveStep((currentIndex + 1) % totalSteps, true);
-            } else {
-              setActiveStep((currentIndex - 1 + totalSteps) % totalSteps, true);
+          // Process swipe if completed within 650ms
+          if (duration < 650) {
+            // Vertical swipe (Swiping up advances to next; swiping down goes to previous)
+            if (Math.abs(diffY) > 35 && Math.abs(diffY) > Math.abs(diffX)) {
+              if (diffY < 0) {
+                // Swiped UP -> Show next heading & card content
+                setActiveStep((currentIndex + 1) % totalSteps, true);
+              } else {
+                // Swiped DOWN -> Show previous heading & card content
+                setActiveStep((currentIndex - 1 + totalSteps) % totalSteps, true);
+              }
+            }
+            // Horizontal swipe (Left -> next, Right -> previous)
+            else if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY)) {
+              if (diffX < 0) {
+                setActiveStep((currentIndex + 1) % totalSteps, true);
+              } else {
+                setActiveStep((currentIndex - 1 + totalSteps) % totalSteps, true);
+              }
             }
           }
         }
