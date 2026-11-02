@@ -173,12 +173,14 @@
 
 /* Popular Card (GROWTH) */
 .pricing-card.is-popular {
-  background: radial-gradient(ellipse 95% 70% at 50% 32%,
-      rgba(35, 85, 165, 0.28) 0%,
-      rgba(9, 21, 44, 0.85) 75%),
+
+  background:
+    radial-gradient(ellipse 95% 70% at 50% 32%,
+      rgba(35, 85, 165, 0.15) 0%,
+      rgba(9, 21, 44, 0.45) 75%),
     linear-gradient(180deg,
-      #3b82f6 6%,
-      #09152b 100%);
+      rgba(59, 130, 246, 0.12) 6%,
+      rgba(10, 16, 32, 0.55) 75%);
 
   border: 1px solid #4fa951;
   box-shadow: 0 0 32px rgba(79, 169, 81, 0.16), 0 0 50px rgba(16, 55, 120, 0.25);

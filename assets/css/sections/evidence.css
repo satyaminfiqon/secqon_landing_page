@@ -32,7 +32,7 @@
 .evidence-scroll-track {
   position: relative;
   width: 100%;
-  height: 380vh; /* Smooth, natural scroll space for 5 cards */
+  height: 320vh; /* Smooth, natural scroll space for 5 cards */
 }
 
 /* Pinned sticky presentation container */
@@ -41,6 +41,7 @@
   top: 0;
   width: 100%;
   height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,7 +51,7 @@
 
 .evidence-container {
   display: grid;
-  grid-template-columns: minmax(460px, 580px) minmax(420px, 560px);
+  grid-template-columns: minmax(480px, 620px) minmax(420px, 560px);
   align-items: center;
   justify-content: space-between;
   gap: 48px;
@@ -104,14 +105,22 @@
    -------------------------------------------------------------------------- */
 .evidence-points-wrapper {
   position: relative;
-  margin-bottom: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 42px;
+  min-height: 250px;
+  width: 100%;
 }
 
 .evidence-points-list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
   position: relative;
+  z-index: 10;
+  max-width: 320px;
 }
 
 .evidence-point-item {
@@ -157,11 +166,12 @@
 }
 
 .point-label {
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   font-weight: 400;
   color: #8c9bb0;
   transition: color 0.25s ease, transform 0.25s ease;
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .evidence-point-item:hover .point-label {
@@ -172,7 +182,7 @@
   border-color: rgba(255, 255, 255, 0.5);
 }
 
-/* Active Highlight (Green Accent Matching Image) */
+/* Active Highlight */
 .evidence-point-item.active .point-radio {
   border-color: #4fa951;
   box-shadow: 0 0 14px rgba(79, 169, 81, 0.45);
@@ -190,58 +200,70 @@
 }
 
 /* --------------------------------------------------------------------------
-   Connected Callout Tooltip & SVG Connector Line
+   Dynamic SVG Connector Line (traces from active point to fixed callout box)
    -------------------------------------------------------------------------- */
-.evidence-callout-container {
-  position: absolute;
-  left: 276px;
-  top: 0;
-  display: flex;
-  align-items: center;
-  pointer-events: none;
-  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
-  z-index: 15;
-}
-
 .evidence-callout-svg {
-  width: 58px;
-  height: 48px;
-  flex-shrink: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
   overflow: visible;
+  z-index: 8;
 }
 
 .evidence-callout-path {
   fill: none;
   stroke: #4fa951;
-  stroke-width: 1.4;
+  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
+  filter: drop-shadow(0 0 8px rgba(79, 169, 81, 0.65));
+  transition: d 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.evidence-callout-dot {
+  fill: #4fa951;
+  filter: drop-shadow(0 0 6px rgba(79, 169, 81, 0.85));
+  transition: cx 0.32s cubic-bezier(0.2, 0.8, 0.2, 1), cy 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* --------------------------------------------------------------------------
+   Fixed Position Point Description Callout Box
+   -------------------------------------------------------------------------- */
+.evidence-callout-container {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  z-index: 15;
 }
 
 .evidence-callout-box {
-  background: rgba(14, 38, 22, 0.92);
-  border: 1px solid rgba(79, 169, 81, 0.5);
-  border-radius: 8px;
-  padding: 12px 18px;
-  max-width: 250px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 18px rgba(79, 169, 81, 0.16);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  margin-left: 2px;
+  background: rgba(14, 38, 22, 0.94);
+  border: 1px solid rgba(79, 169, 81, 0.55);
+  border-radius: 10px;
+  padding: 14px 20px;
+  width: 235px;
+  box-sizing: border-box;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 20px rgba(79, 169, 81, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .evidence-callout-text {
   font-size: 0.86rem;
-  line-height: 1.45;
+  line-height: 1.48;
   color: #bbf7d0;
   font-weight: 400;
   display: block;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-/* --------------------------------------------------------------------------
-   Actions / CTA Buttons
-   -------------------------------------------------------------------------- */
 .evidence-actions {
   display: flex;
   align-items: center;
@@ -646,44 +668,100 @@
 }
 
 /* --------------------------------------------------------------------------
-   Card Stack Deck Ordering / Fan Angles
+   Card Shuffle 3D Deck Layout (.active, .left, .right, .left-2, .right-2)
    -------------------------------------------------------------------------- */
-/* Default resting layout for a fan of 5 cards */
-.evidence-card[data-card-index="0"] {
-  transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-  z-index: 5;
+.cards,
+.evidence-card {
+  cursor: pointer;
+  transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1),
+              opacity 0.5s ease,
+              filter 0.4s ease,
+              border-color 0.4s ease,
+              box-shadow 0.5s ease;
+}
+
+/* Front Active Card */
+.cards.active,
+.evidence-card.active {
+  transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  z-index: 10;
   opacity: 1;
+  pointer-events: auto;
+  filter: brightness(1);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8), 0 0 35px rgba(4, 82, 190, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  border-color: rgba(79, 169, 81, 0.4);
 }
 
-.evidence-card[data-card-index="1"] {
-  transform: translate3d(20px, -8px, 0) rotate(5deg) scale(0.98);
-  z-index: 4;
-  opacity: 0.72;
+/* Left 1 Card */
+.cards.left,
+.evidence-card.left {
+  transform: translate3d(-34%, 12px, -80px) scale(0.88) rotate(-5.5deg);
+  z-index: 6;
+  opacity: 0.68;
+  cursor: pointer;
+  filter: brightness(0.8);
 }
 
-.evidence-card[data-card-index="2"] {
-  transform: translate3d(-18px, -14px, 0) rotate(-4.5deg) scale(0.96);
+/* Right 1 Card */
+.cards.right,
+.evidence-card.right {
+  transform: translate3d(34%, 12px, -80px) scale(0.88) rotate(5.5deg);
+  z-index: 6;
+  opacity: 0.68;
+  cursor: pointer;
+  filter: brightness(0.8);
+}
+
+/* Left 2 Card */
+.cards.left-2,
+.evidence-card.left-2 {
+  transform: translate3d(-58%, 24px, -160px) scale(0.76) rotate(-9.5deg);
   z-index: 3;
-  opacity: 0.52;
+  opacity: 0.35;
+  cursor: pointer;
+  filter: brightness(0.65);
 }
 
-.evidence-card[data-card-index="3"] {
-  transform: translate3d(28px, -20px, 0) rotate(7.5deg) scale(0.94);
-  z-index: 2;
-  opacity: 0.32;
+/* Right 2 Card */
+.cards.right-2,
+.evidence-card.right-2 {
+  transform: translate3d(58%, 24px, -160px) scale(0.76) rotate(9.5deg);
+  z-index: 3;
+  opacity: 0.35;
+  cursor: pointer;
+  filter: brightness(0.65);
 }
 
-.evidence-card[data-card-index="4"] {
-  transform: translate3d(-26px, -24px, 0) rotate(-7deg) scale(0.92);
-  z-index: 1;
-  opacity: 0.18;
+/* Hover Interactions on Peeking Cards */
+.cards:not(.active):hover,
+.evidence-card:not(.active):hover {
+  opacity: 0.95;
+  filter: brightness(1.05);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* When a card is shuffling off (discarding to bottom) */
-.evidence-card.shuffling-out {
-  transform: translate3d(120px, -160px, 0) rotate(18deg) scale(0.88) !important;
-  opacity: 0 !important;
-  pointer-events: none;
+.cards.left:hover,
+.evidence-card.left:hover {
+  transform: translate3d(-37%, 6px, -50px) scale(0.91) rotate(-3.5deg);
+  z-index: 8;
+}
+
+.cards.right:hover,
+.evidence-card.right:hover {
+  transform: translate3d(37%, 6px, -50px) scale(0.91) rotate(3.5deg);
+  z-index: 8;
+}
+
+.cards.left-2:hover,
+.evidence-card.left-2:hover {
+  transform: translate3d(-61%, 18px, -120px) scale(0.8) rotate(-7deg);
+  z-index: 5;
+}
+
+.cards.right-2:hover,
+.evidence-card.right-2:hover {
+  transform: translate3d(61%, 18px, -120px) scale(0.8) rotate(7deg);
+  z-index: 5;
 }
 
 /* --------------------------------------------------------------------------
@@ -692,97 +770,289 @@
 @media (max-width: 1200px) {
   .evidence-container {
     grid-template-columns: 1fr 1fr;
-    gap: 36px;
-    padding: 0 28px;
+    gap: 32px;
+    padding: 0 24px;
+  }
+
+  .evidence-content-col {
+    max-width: 520px;
+  }
+
+  .evidence-points-wrapper {
+    min-height: 230px;
+  }
+
+  .evidence-points-list {
+    max-width: 260px;
+    gap: 14px;
+  }
+
+  .point-label {
+    font-size: 0.92rem;
+  }
+
+  .evidence-callout-box {
+    width: 200px;
+    padding: 12px 16px;
+  }
+
+  .evidence-callout-text {
+    font-size: 0.8rem;
   }
 
   .evidence-cards-deck {
-    width: 420px;
-    height: 540px;
+    width: 400px;
+    height: 520px;
   }
 
-  .evidence-callout-container {
-    left: 270px;
+  .cards.left,
+  .evidence-card.left {
+    transform: translate3d(-26%, 12px, -70px) scale(0.88) rotate(-5deg);
+  }
+
+  .cards.right,
+  .evidence-card.right {
+    transform: translate3d(26%, 12px, -70px) scale(0.88) rotate(5deg);
+  }
+
+  .cards.left-2,
+  .evidence-card.left-2 {
+    transform: translate3d(-46%, 22px, -140px) scale(0.76) rotate(-8deg);
+  }
+
+  .cards.right-2,
+  .evidence-card.right-2 {
+    transform: translate3d(46%, 22px, -140px) scale(0.76) rotate(8deg);
   }
 }
 
 @media (max-width: 992px) {
   .evidence-scroll-track {
-    height: auto;
+    height: 280vh;
   }
 
   .evidence-sticky-wrapper {
-    position: relative;
-    height: auto;
-    padding: 90px 20px 100px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-height: 100vh;
+    padding: 40px 20px;
+    overflow: hidden;
   }
 
   .evidence-container {
     grid-template-columns: 1fr;
-    gap: 60px;
+    gap: 36px;
     padding: 0;
+    max-width: 680px;
   }
 
   .evidence-content-col {
     max-width: 100%;
   }
 
-  .evidence-callout-container {
-    position: static;
-    margin-top: 20px;
-    margin-bottom: 24px;
-    transform: none !important;
+  .evidence-points-wrapper {
+    min-height: 220px;
+    margin-bottom: 28px;
   }
 
-  .evidence-callout-svg {
-    display: none;
+  .evidence-points-list {
+    max-width: 320px;
+  }
+
+  .point-label {
+    font-size: 0.96rem;
   }
 
   .evidence-callout-box {
-    max-width: 100%;
+    width: 230px;
   }
 
   .evidence-visual-col {
-    height: 580px;
+    height: 520px;
     width: 100%;
+    overflow: visible;
   }
 
   .evidence-cards-deck {
     width: 100%;
-    max-width: 460px;
-    height: 540px;
+    max-width: 440px;
+    height: 500px;
+  }
+
+  .cards.left,
+  .evidence-card.left {
+    transform: translate3d(-24%, 12px, -60px) scale(0.88) rotate(-4deg);
+  }
+
+  .cards.right,
+  .evidence-card.right {
+    transform: translate3d(24%, 12px, -60px) scale(0.88) rotate(4deg);
+  }
+
+  .cards.left-2,
+  .evidence-card.left-2 {
+    transform: translate3d(-42%, 22px, -120px) scale(0.78) rotate(-7deg);
+  }
+
+  .cards.right-2,
+  .evidence-card.right-2 {
+    transform: translate3d(42%, 22px, -120px) scale(0.78) rotate(7deg);
   }
 }
 
 @media (max-width: 640px) {
+  .evidence-scroll-track {
+    height: 260vh;
+  }
+
+  .evidence-sticky-wrapper {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 16px 16px 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+  }
+
+  .evidence-container {
+    gap: 18px;
+  }
+
+  .evidence-eyebrow {
+    margin-bottom: 8px;
+    font-size: 0.72rem;
+  }
+
   .evidence-title {
-    font-size: 2.1rem;
+    font-size: clamp(1.8rem, 6.2vw, 2.2rem);
+    line-height: 1.16;
+    margin-bottom: 10px;
+  }
+
+  .evidence-desc {
+    font-size: 0.84rem;
+    line-height: 1.45;
+    margin-bottom: 16px;
+  }
+
+  .evidence-points-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    min-height: auto;
+    margin-bottom: 18px;
+    width: 100%;
+  }
+
+  .evidence-points-list {
+    width: 100%;
+    max-width: 100%;
+    gap: 10px;
+  }
+
+  .evidence-point-item {
+    gap: 10px;
+    padding: 2px 0;
+    width: 100%;
+  }
+
+  .point-radio {
+    width: 16px;
+    height: 16px;
+  }
+
+  .point-radio::after {
+    width: 5px;
+    height: 5px;
+  }
+
+  .point-label {
+    font-size: 0.85rem;
+    white-space: normal;
+  }
+
+  .evidence-callout-container {
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .evidence-callout-box {
+    width: 100%;
+    max-width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+  }
+
+  .evidence-callout-text {
+    font-size: 0.8rem;
+    line-height: 1.4;
   }
 
   .evidence-actions {
-    flex-direction: column;
-    width: 100%;
+    gap: 10px;
+    margin-top: 6px;
   }
 
   .btn-evidence-buy,
   .btn-evidence-sample {
+    padding: 10px 16px;
+    font-size: 0.82rem;
     width: 100%;
     text-align: center;
   }
 
+  .evidence-visual-col {
+    height: 460px;
+    width: 100%;
+  }
+
   .evidence-cards-deck {
-    height: 490px;
+    width: min(330px, 86vw);
+    height: 440px;
   }
 
   .evidence-card {
-    padding: 22px 18px;
+    padding: 18px 16px;
   }
 
   .card-entity-title {
-    font-size: 1.35rem;
+    font-size: 1.25rem;
   }
 
   .score-grade {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
+  }
+
+  .cards.left,
+  .evidence-card.left {
+    transform: translate3d(-14%, 8px, -50px) scale(0.9) rotate(-3deg);
+  }
+
+  .cards.right,
+  .evidence-card.right {
+    transform: translate3d(14%, 8px, -50px) scale(0.9) rotate(3deg);
+  }
+
+  .cards.left-2,
+  .evidence-card.left-2 {
+    transform: translate3d(-25%, 16px, -90px) scale(0.8) rotate(-5deg);
+    opacity: 0.22;
+  }
+
+  .cards.right-2,
+  .evidence-card.right-2 {
+    transform: translate3d(25%, 16px, -90px) scale(0.8) rotate(5deg);
+    opacity: 0.22;
   }
 }

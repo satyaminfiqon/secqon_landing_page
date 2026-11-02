@@ -1,12 +1,6 @@
-/**
- * Evidence Section - Interactive Card Shuffle & Synchronized Scroll Controller
- * - Left side: 5 interactive heading points with custom radio targets
- * - Dynamic connected callout tooltip with SVG line tracking
- * - Right side: 3D translucent glass cards deck with smooth physics-based shuffle
- * - Bi-directional: Scrolling shuffles cards & updates points; clicking points shuffles cards & updates scroll!
- * - Touch swipe support on mobile devices
- */
-
+/* ==========================================================================
+   PREVIOUS IMPLEMENTATION (COMMENTED OUT AS REQUESTED)
+   ==========================================================================
 (function () {
   document.addEventListener('DOMContentLoaded', () => {
     const section = document.querySelector('.evidence-section');
@@ -35,16 +29,11 @@
       { x: -28, y: -28, rot: -7.5, scale: 0.88, opacity: 0.16, z: 6 }
     ];
 
-    /**
-     * Apply 3D Card Deck layout based on current active card index
-     */
     function updateCardDeck(activeIdx, previousIdx) {
       cards.forEach((card, i) => {
-        // Calculate relative depth/rank in the circular deck (0 = top, 4 = bottom)
         const rank = (i - activeIdx + totalSteps) % totalSteps;
         const config = deckTransforms[rank] || deckTransforms[deckTransforms.length - 1];
 
-        // If this was the card just discarded from the top, add brief shuffle-out flair
         if (previousIdx !== undefined && i === previousIdx && rank === totalSteps - 1) {
           card.classList.add('shuffling-out');
           setTimeout(() => {
@@ -64,16 +53,12 @@
       });
     }
 
-    /**
-     * Update callout tooltip position & text to align with active point item
-     */
     function updateCallout(activeIdx) {
       const activeItem = pointItems[activeIdx];
       if (!activeItem || !calloutWrap || !calloutText) return;
 
       const calloutMessage = activeItem.getAttribute('data-callout') || '';
 
-      // Fade out, change text, fade in
       calloutText.style.opacity = '0';
       calloutText.style.transform = 'translateY(4px)';
 
@@ -83,14 +68,10 @@
         calloutText.style.transform = 'translateY(0)';
       }, 150);
 
-      // Align vertical offset of callout box to active item
       const itemTop = activeItem.offsetTop;
       calloutWrap.style.transform = `translateY(${itemTop}px)`;
     }
 
-    /**
-     * Activate a given index (0 to 4)
-     */
     function setActiveStep(newIndex, updateScroll = false) {
       if (newIndex < 0) newIndex = 0;
       if (newIndex >= totalSteps) newIndex = totalSteps - 1;
@@ -98,7 +79,6 @@
       const prevIndex = currentIndex;
       currentIndex = newIndex;
 
-      // 1. Update left points list highlight
       pointItems.forEach((item, idx) => {
         if (idx === currentIndex) {
           item.classList.add('active');
@@ -109,13 +89,9 @@
         }
       });
 
-      // 2. Update connected callout tooltip
       updateCallout(currentIndex);
-
-      // 3. Shuffle card deck
       updateCardDeck(currentIndex, prevIndex);
 
-      // 4. If triggered by click, scroll into corresponding track position
       if (updateScroll && window.innerWidth > 992) {
         isManualScrolling = true;
         clearTimeout(scrollTimeout);
@@ -137,9 +113,6 @@
       }
     }
 
-    /**
-     * Scroll handler for desktop pinned sticky progression
-     */
     function handleScroll() {
       if (isManualScrolling || window.innerWidth <= 992) return;
 
@@ -151,7 +124,6 @@
       const scrolled = -rect.top;
       const progress = Math.max(0, Math.min(1, scrolled / scrollDistance));
 
-      // Map progress 0.0 -> 1.0 into step 0 -> 4
       const calculatedIndex = Math.min(totalSteps - 1, Math.floor(progress * totalSteps));
 
       if (calculatedIndex !== currentIndex) {
@@ -159,21 +131,311 @@
       }
     }
 
-    // Attach click listeners to point items
     pointItems.forEach((item, index) => {
       item.addEventListener('click', () => {
         setActiveStep(index, true);
       });
     });
 
-    // Attach click listeners to cards so clicking a peeking card shuffles it to front
     cards.forEach((card, index) => {
       card.addEventListener('click', () => {
         setActiveStep(index, true);
       });
     });
 
-    // Mobile swipe gesture support
+    if (deckElement) {
+      touchStartX = 0;
+      touchStartY = 0;
+
+      deckElement.addEventListener('touchstart', (e) => {
+        if (e.changedTouches && e.changedTouches[0]) {
+          touchStartX = e.changedTouches[0].screenX;
+          touchStartY = e.changedTouches[0].screenY;
+        }
+      }, { passive: true });
+
+      deckElement.addEventListener('touchend', (e) => {
+        if (e.changedTouches && e.changedTouches[0]) {
+          const diffX = e.changedTouches[0].screenX - touchStartX;
+          const diffY = e.changedTouches[0].screenY - touchStartY;
+
+          if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+            if (diffX < 0) {
+              setActiveStep((currentIndex + 1) % totalSteps, true);
+            } else {
+              setActiveStep((currentIndex - 1 + totalSteps) % totalSteps, true);
+            }
+          }
+        }
+      }, { passive: true });
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', () => {
+      updateCallout(currentIndex);
+    }, { passive: true });
+
+    setActiveStep(0, false);
+  });
+})();
+========================================================================== */
+
+/**
+ * ==========================================================================
+ * Evidence Section - Interactive 3D Card Shuffle & Synchronized Scroll
+ * - Scroll synchronization: Scrolling page changes card according to left heading
+ * - Fixed callout description box: Position is fixed, never jumps around
+ * - Dynamic green SVG line: Automatically curves from the active point to the box
+ * - User card swap mechanics: Cards swap class positions cleanly on click or scroll
+ * - Fully responsive across all devices (Desktop, Tablet, Mobile)
+ * ==========================================================================
+ */
+(function () {
+  document.addEventListener('DOMContentLoaded', () => {
+    const scrollTrack = document.getElementById('evidenceScrollTrack');
+    const pointItems = Array.from(document.querySelectorAll('.evidence-point-item'));
+    const cards = Array.from(document.querySelectorAll('.cards, .evidence-card'));
+    const deckElement = document.getElementById('evidenceCardsDeck');
+    const wrapper = document.getElementById('evidencePointsWrapper');
+    const calloutBox = document.querySelector('.evidence-callout-box');
+    const calloutText = document.getElementById('evidenceCalloutText');
+    const path = document.getElementById('evidenceCalloutPath');
+    const startDot = document.getElementById('evidenceCalloutStartDot');
+    const endDot = document.getElementById('evidenceCalloutEndDot');
+
+    if (!cards || cards.length === 0 || pointItems.length === 0) return;
+
+    const totalSteps = pointItems.length;
+    let currentIndex = 0;
+    let isManualScrolling = false;
+    let scrollTimeout = null;
+
+    // 1. Initial 3D position classes for cards
+    const setClasses = () => {
+      const classes = cards.length <= 3
+        ? ['left', 'active', 'right']
+        : ['active', 'right', 'right-2', 'left-2', 'left'];
+
+      cards.forEach((card, index) => {
+        if (!card.classList.contains('cards')) {
+          card.classList.add('cards');
+        }
+        if (classes[index]) {
+          card.classList.add(classes[index]);
+        }
+      });
+    };
+
+    // 2. Dynamic Green SVG Connector Line from active heading to fixed description box
+    const updateGreenLine = (activeIdx) => {
+      const activeItem = pointItems[activeIdx];
+      if (!wrapper || !activeItem || !calloutBox || !path) return;
+
+      const wrapperRect = wrapper.getBoundingClientRect();
+      const itemRect = activeItem.getBoundingClientRect();
+      const boxRect = calloutBox.getBoundingClientRect();
+
+      if (wrapperRect.width === 0 || itemRect.width === 0 || boxRect.width === 0) return;
+
+      // Determine whether points list and callout box are side-by-side or stacked vertically
+      const isSideBySide = boxRect.left >= (itemRect.left + 50);
+
+      if (isSideBySide) {
+        // Desktop / Tablet side-by-side:
+        // Connect from the right edge of active heading item to the left edge of fixed callout box
+        const x1 = Math.round(itemRect.right - wrapperRect.left + 8);
+        const y1 = Math.round(itemRect.top - wrapperRect.top + itemRect.height / 2);
+
+        const x2 = Math.round(boxRect.left - wrapperRect.left - 2);
+        const y2 = Math.round(boxRect.top - wrapperRect.top + boxRect.height / 2);
+
+        const deltaX = Math.max(16, x2 - x1);
+        const cp1x = Math.round(x1 + deltaX * 0.45);
+        const cp1y = y1;
+        const cp2x = Math.round(x1 + deltaX * 0.55);
+        const cp2y = y2;
+
+        const d = `M ${x1},${y1} C ${cp1x},${cp1y} ${cp2x},${cp2y} ${x2},${y2}`;
+        path.setAttribute('d', d);
+        path.style.opacity = '1';
+
+        if (startDot) {
+          startDot.setAttribute('cx', x1);
+          startDot.setAttribute('cy', y1);
+          startDot.style.opacity = '1';
+        }
+        if (endDot) {
+          endDot.setAttribute('cx', x2);
+          endDot.setAttribute('cy', y2);
+          endDot.style.opacity = '1';
+        }
+      } else {
+        // Mobile stacked view:
+        // Connect from the active radio dot down to top edge of fixed callout box
+        const radioEl = activeItem.querySelector('.point-radio') || activeItem;
+        const radioRect = radioEl.getBoundingClientRect();
+
+        const x1 = Math.round(radioRect.left - wrapperRect.left + radioRect.width / 2);
+        const y1 = Math.round(radioRect.bottom - wrapperRect.top + 3);
+
+        const x2 = Math.round(boxRect.left - wrapperRect.left + 22);
+        const y2 = Math.round(boxRect.top - wrapperRect.top - 2);
+
+        const deltaY = Math.max(14, y2 - y1);
+        const cp1x = x1;
+        const cp1y = Math.round(y1 + deltaY * 0.45);
+        const cp2x = x2;
+        const cp2y = Math.round(y1 + deltaY * 0.55);
+
+        const d = `M ${x1},${y1} C ${cp1x},${cp1y} ${cp2x},${cp2y} ${x2},${y2}`;
+        path.setAttribute('d', d);
+        path.style.opacity = '1';
+
+        if (startDot) {
+          startDot.setAttribute('cx', x1);
+          startDot.setAttribute('cy', y1);
+          startDot.style.opacity = '1';
+        }
+        if (endDot) {
+          endDot.setAttribute('cx', x2);
+          endDot.setAttribute('cy', y2);
+          endDot.style.opacity = '1';
+        }
+      }
+    };
+
+    // 3. Update Callout text inside the fixed position box
+    const updateCalloutText = (activeIdx) => {
+      const activeItem = pointItems[activeIdx];
+      if (!activeItem || !calloutText) return;
+
+      const calloutMessage = activeItem.getAttribute('data-callout') || '';
+      if (calloutText.textContent === calloutMessage) return;
+
+      calloutText.style.opacity = '0';
+      calloutText.style.transform = 'translateY(3px)';
+
+      setTimeout(() => {
+        calloutText.textContent = calloutMessage;
+        calloutText.style.opacity = '1';
+        calloutText.style.transform = 'translateY(0)';
+      }, 120);
+    };
+
+    // 4. Smooth scrolling to step in the scroll track
+    const scrollToStep = (stepIndex) => {
+      if (!scrollTrack) return;
+      const trackRect = scrollTrack.getBoundingClientRect();
+      const absoluteTrackTop = window.pageYOffset + trackRect.top;
+      const scrollDistance = scrollTrack.offsetHeight - window.innerHeight;
+      if (scrollDistance <= 0) return;
+
+      // Position scroll travel at the center of the step's segment
+      const targetProgress = (stepIndex + 0.5) / totalSteps;
+      const targetY = absoluteTrackTop + targetProgress * scrollDistance;
+
+      isManualScrolling = true;
+      clearTimeout(scrollTimeout);
+
+      window.scrollTo({
+        top: targetY,
+        behavior: 'smooth'
+      });
+
+      scrollTimeout = setTimeout(() => {
+        isManualScrolling = false;
+      }, 650);
+    };
+
+    // 5. Set active step across headings, green line, and 3D card deck
+    const setActiveStep = (newStep, updateScroll = false) => {
+      if (newStep < 0) newStep = 0;
+      if (newStep >= totalSteps) newStep = totalSteps - 1;
+
+      currentIndex = newStep;
+
+      // Swap target card into active slot if not already active
+      const targetCard = document.querySelector(`.cards[data-card-index="${newStep}"], #card-${newStep}`);
+      const activeCard = document.querySelector('.cards.active');
+
+      if (targetCard && activeCard && targetCard !== activeCard) {
+        const classesFrom = targetCard.className;
+        const classesTo = activeCard.className;
+        targetCard.className = classesTo;
+        activeCard.className = classesFrom;
+      }
+
+      // Synchronize left heading points highlight
+      pointItems.forEach((item, idx) => {
+        const isActive = idx === newStep;
+        item.classList.toggle('active', isActive);
+        item.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+
+      // Update card accessibility
+      cards.forEach((card) => {
+        card.setAttribute('aria-hidden', card.classList.contains('active') ? 'false' : 'true');
+      });
+
+      // Update callout text & green line
+      updateCalloutText(newStep);
+      requestAnimationFrame(() => updateGreenLine(newStep));
+
+      if (updateScroll) {
+        scrollToStep(newStep);
+      }
+    };
+
+    // 6. Card click swap logic (user's specification)
+    const changePositions = (e) => {
+      const clickedCard = e.currentTarget;
+      const activeCard = document.querySelector('.cards.active');
+      if (!activeCard || clickedCard.classList.contains('active')) return;
+
+      const classesFrom = clickedCard.className;
+      const classesTo = activeCard.className;
+      clickedCard.className = classesTo;
+      activeCard.className = classesFrom;
+
+      const dataIdx = clickedCard.getAttribute('data-card-index');
+      const newIdx = dataIdx !== null
+        ? parseInt(dataIdx, 10)
+        : parseInt((clickedCard.id || '').replace(/\D/g, ''), 10) || 0;
+
+      setActiveStep(newIdx, true);
+    };
+
+    // Attach card click handlers
+    cards.forEach((card) => {
+      card.addEventListener('click', changePositions);
+    });
+
+    // Attach heading point click handlers
+    pointItems.forEach((item, index) => {
+      item.addEventListener('click', () => {
+        setActiveStep(index, true);
+      });
+    });
+
+    // 7. Scroll handler: updates active card & heading as user scrolls through the track
+    const handleScroll = () => {
+      if (isManualScrolling || !scrollTrack) return;
+
+      const rect = scrollTrack.getBoundingClientRect();
+      const scrollDistance = scrollTrack.offsetHeight - window.innerHeight;
+
+      if (scrollDistance <= 0) return;
+
+      const scrolled = -rect.top;
+      const progress = Math.max(0, Math.min(1, scrolled / scrollDistance));
+      const calculatedStep = Math.min(totalSteps - 1, Math.floor(progress * totalSteps));
+
+      if (calculatedStep !== currentIndex) {
+        setActiveStep(calculatedStep, false);
+      }
+    };
+
+    // 8. Mobile touch swipe gesture support
     if (deckElement) {
       let touchStartX = 0;
       let touchStartY = 0;
@@ -192,10 +454,8 @@
 
           if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
             if (diffX < 0) {
-              // Swiped left -> next card
               setActiveStep((currentIndex + 1) % totalSteps, true);
             } else {
-              // Swiped right -> previous card
               setActiveStep((currentIndex - 1 + totalSteps) % totalSteps, true);
             }
           }
@@ -203,13 +463,20 @@
       }, { passive: true });
     }
 
-    // Scroll listener with passive flag
+    // Scroll & Resize listeners
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', () => {
-      updateCallout(currentIndex);
+      updateGreenLine(currentIndex);
+    }, { passive: true });
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => updateGreenLine(currentIndex), 150);
     }, { passive: true });
 
-    // Initial activation
+    // Initialize layout and state
+    setClasses();
     setActiveStep(0, false);
+    setTimeout(() => {
+      updateGreenLine(0);
+    }, 100);
   });
 })();
