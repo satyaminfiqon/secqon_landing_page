@@ -107,9 +107,15 @@
   transform: translateY(-1px);
 }
 
+@media (max-width: 992px) {
+  .proves-section {
+    padding: clamp(40px, 6vh, 60px) 24px clamp(60px, 10vh, 100px);
+  }
+}
+
 @media (max-width: 640px) {
   .proves-section {
-    padding: 80px 20px 100px;
+    padding: clamp(32px, 5vh, 48px) 20px clamp(50px, 8vh, 80px);
   }
 
   .proves-title {

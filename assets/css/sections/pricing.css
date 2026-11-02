@@ -461,8 +461,12 @@
 }
 
 @media (max-width: 768px) {
+  .pricing-container {
+    padding: 20px 28px;
+  }
+
   .pricing-section {
-    padding: 10px 0 100px;
+    padding: 10px 0 5px;
   }
 
   .pricing-grid {
