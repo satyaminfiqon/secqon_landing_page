@@ -241,6 +241,7 @@
     line-height: 1.24;
     margin-bottom: 14px;
     max-width: 100%;
+    padding-top: 5px;
   }
 
   .security-card-desc {
@@ -250,6 +251,7 @@
   }
 
   .security-card-number {
+    top: 25px;
     font-size: clamp(3.2rem, 4.6vw, 4.2rem);
     margin-bottom: clamp(6px, 1.2vh, 12px);
   }
