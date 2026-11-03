@@ -3,15 +3,19 @@
  *
  * 1. Desktop Mode (> 992px):
  *    - Left image viewer stays sticky and full viewport height & width.
- *    - Right text sections scroll normally.
- *    - Image automatically slides when a text section reaches center of viewport.
- *    - Active text section is highlighted.
- *    - Clicking a text step smoothly scrolls to it.
+ *    - Right text sections scroll smoothly and lock into fixed centered positions.
+ *    - When the user scrolls (mouse wheel, trackpad, touch, or arrow keys),
+ *      the next text heading/step automatically glides to the exact fixed position.
+ *    - Left image slides synchronously with the text transition.
+ *    - When on the last step (Step 06), if the user attempts to scroll down,
+ *      it smoothly transitions directly to the next section (#proves).
+ *    - Active text section is highlighted, passed steps marked.
+ *    - Clicking any text step smoothly scrolls directly to it.
  *
  * 2. Mobile Mode (<= 992px):
  *    - Ultra-smooth continuous card deck slide & size reduction engine.
  *    - Each card displays Image first (top), then Content (bottom).
- *    - Matches the card scrolling transition of the Stages section above.
+ *    - Swipe left on last card smoothly proceeds to next section.
  *    - Physics-based LERP interpolation on requestAnimationFrame (60/120fps).
  *    - Touch swipe gestures & interactive pagination dots.
  */
@@ -22,21 +26,136 @@
     /* ==========================================================================
        1. Desktop Synchronized Sticky Scroll Controller (> 992px)
        ========================================================================== */
+    const showcase = document.querySelector('.security-sticky-showcase');
     const track = document.getElementById('securityImageTrack');
     const imageFrame = document.querySelector('.security-image-frame');
     const steps = Array.from(document.querySelectorAll('.security-text-step'));
+    const nextSection = document.getElementById('proves') || document.querySelector('.proves-section');
+    const secHeader = document.querySelector('.security-header') || document.getElementById('security');
 
-    let desktopCurrentIndex = -1;
-    let desktopIsTicking = false;
+    let desktopCurrentIndex = 0;
+    let isLocked = false;
+    let isAutoScrolling = false;
+    let scrollAnimationId = null;
+    let scrollEndTimer = null;
 
     function getImageHeight() {
-      return imageFrame ? imageFrame.clientHeight : 0;
+      return imageFrame ? imageFrame.clientHeight : window.innerHeight;
     }
 
     function changeDesktopImage(index) {
       if (!track || !imageFrame) return;
       const imageHeight = getImageHeight();
       track.style.transform = `translate3d(0, -${index * imageHeight}px, 0)`;
+    }
+
+    function setStepActive(index) {
+      if (index < 0 || index >= steps.length) return;
+      desktopCurrentIndex = index;
+      steps.forEach((step, idx) => {
+        step.classList.toggle('active', idx === index);
+        step.classList.toggle('passed', idx < index);
+      });
+      changeDesktopImage(index);
+    }
+
+    function getStepScrollY(index) {
+      if (index < 0 || index >= steps.length) return 0;
+      const step = steps[index];
+      const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+      const rect = step.getBoundingClientRect();
+      const stepCenter = rect.top + (step.offsetHeight || window.innerHeight) / 2;
+      const viewportCenter = window.innerHeight / 2;
+      return currentScrollY + (stepCenter - viewportCenter);
+    }
+
+    // Perlin's Smootherstep: zero acceleration & zero jerk at endpoints for velvety glide
+    function smootherstep(t) {
+      t = Math.max(0, Math.min(1, t));
+      return t * t * t * (t * (t * 6 - 15) + 10);
+    }
+
+    function smoothScrollTo(targetY, duration = 520, callback) {
+      if (scrollAnimationId) {
+        cancelAnimationFrame(scrollAnimationId);
+        scrollAnimationId = null;
+      }
+
+      const startY = window.pageYOffset || document.documentElement.scrollTop;
+      const distance = targetY - startY;
+
+      if (Math.abs(distance) < 1.5) {
+        document.documentElement.style.scrollBehavior = 'auto';
+        window.scrollTo(0, targetY);
+        document.documentElement.style.scrollBehavior = '';
+        isAutoScrolling = false;
+        if (callback) callback();
+        return;
+      }
+
+      isAutoScrolling = true;
+      // Temporarily disable global CSS smooth-scroll so it doesn't fight RAF
+      document.documentElement.style.scrollBehavior = 'auto';
+      const startTime = performance.now();
+
+      function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = smootherstep(progress);
+
+        window.scrollTo(0, startY + distance * eased);
+
+        if (progress < 1) {
+          scrollAnimationId = requestAnimationFrame(step);
+        } else {
+          window.scrollTo(0, targetY);
+          scrollAnimationId = null;
+          isAutoScrolling = false;
+          document.documentElement.style.scrollBehavior = '';
+          if (callback) callback();
+        }
+      }
+
+      scrollAnimationId = requestAnimationFrame(step);
+    }
+
+    function goToStep(index) {
+      if (index < 0) index = 0;
+      if (index >= steps.length) index = steps.length - 1;
+      setStepActive(index);
+      isLocked = true;
+      const targetY = getStepScrollY(index);
+      smoothScrollTo(targetY, 520, () => {
+        setTimeout(() => {
+          isLocked = false;
+        }, 90);
+      });
+    }
+
+    function goToNextSection() {
+      if (!nextSection) return;
+      isLocked = true;
+      const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+      const nextRect = nextSection.getBoundingClientRect();
+      const targetY = currentScrollY + nextRect.top;
+      smoothScrollTo(targetY, 600, () => {
+        setTimeout(() => {
+          isLocked = false;
+        }, 120);
+      });
+    }
+
+    function goToPrevHeader() {
+      if (!secHeader) return;
+      isLocked = true;
+      const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+      const headerRect = secHeader.getBoundingClientRect();
+      const targetY = Math.max(0, currentScrollY + headerRect.top - 20);
+      smoothScrollTo(targetY, 520, () => {
+        setTimeout(() => {
+          isLocked = false;
+        }, 90);
+      });
     }
 
     function updateDesktopActiveStep() {
@@ -59,33 +178,160 @@
 
       if (activeIndex !== desktopCurrentIndex) {
         desktopCurrentIndex = activeIndex;
+        setStepActive(desktopCurrentIndex);
+      }
+    }
 
-        steps.forEach((step, index) => {
-          step.classList.toggle('active', index === desktopCurrentIndex);
-        });
+    function handleWheel(e) {
+      if (window.innerWidth <= 992) return;
+      if (!showcase || steps.length === 0) return;
 
-        changeDesktopImage(desktopCurrentIndex);
+      const showcaseRect = showcase.getBoundingClientRect();
+      const inShowcase = showcaseRect.top <= 80 && showcaseRect.bottom >= window.innerHeight - 80;
+
+      if (!inShowcase) return;
+
+      // Filter micro jitter / tiny trackpad noise
+      if (Math.abs(e.deltaY) < 18) {
+        if (isLocked || isAutoScrolling) e.preventDefault();
+        return;
       }
 
-      desktopIsTicking = false;
+      // If currently animating or locked, absorb event cleanly without extending lock
+      if (isLocked || isAutoScrolling) {
+        e.preventDefault();
+        return;
+      }
+
+      if (!isAutoScrolling) {
+        updateDesktopActiveStep();
+      }
+
+      const scrollingDown = e.deltaY > 0;
+
+      if (scrollingDown) {
+        if (desktopCurrentIndex < steps.length - 1) {
+          e.preventDefault();
+          goToStep(desktopCurrentIndex + 1);
+        } else if (desktopCurrentIndex === steps.length - 1) {
+          // Last text reached! User tries to scroll -> smooth glide to next section
+          e.preventDefault();
+          goToNextSection();
+        }
+      } else { // scrolling up
+        if (desktopCurrentIndex > 0) {
+          e.preventDefault();
+          goToStep(desktopCurrentIndex - 1);
+        } else if (desktopCurrentIndex === 0) {
+          if (showcaseRect.top < -30) {
+            e.preventDefault();
+            goToPrevHeader();
+          }
+        }
+      }
+    }
+
+    function handleKeyDown(e) {
+      if (window.innerWidth <= 992) return;
+      if (!showcase || steps.length === 0) return;
+
+      const showcaseRect = showcase.getBoundingClientRect();
+      const inShowcase = showcaseRect.top <= 80 && showcaseRect.bottom >= window.innerHeight - 80;
+      if (!inShowcase) return;
+
+      if (isLocked || isAutoScrolling) {
+        if (['ArrowDown', 'PageDown', 'ArrowUp', 'PageUp', ' '].includes(e.key)) {
+          e.preventDefault();
+        }
+        return;
+      }
+
+      if (!isAutoScrolling) {
+        updateDesktopActiveStep();
+      }
+
+      if (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) {
+        if (desktopCurrentIndex < steps.length - 1) {
+          e.preventDefault();
+          goToStep(desktopCurrentIndex + 1);
+        } else if (desktopCurrentIndex === steps.length - 1) {
+          e.preventDefault();
+          goToNextSection();
+        }
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) {
+        if (desktopCurrentIndex > 0) {
+          e.preventDefault();
+          goToStep(desktopCurrentIndex - 1);
+        } else if (desktopCurrentIndex === 0) {
+          if (showcaseRect.top < -30) {
+            e.preventDefault();
+            goToPrevHeader();
+          }
+        }
+      }
+    }
+
+    let desktopTouchStartY = 0;
+    let desktopTouchStartX = 0;
+
+    if (showcase) {
+      showcase.addEventListener('touchstart', (e) => {
+        if (window.innerWidth <= 992) return;
+        if (e.touches && e.touches.length > 0) {
+          desktopTouchStartY = e.touches[0].clientY;
+          desktopTouchStartX = e.touches[0].clientX;
+        }
+      }, { passive: true });
+
+      showcase.addEventListener('touchend', (e) => {
+        if (window.innerWidth <= 992) return;
+        if (!e.changedTouches || e.changedTouches.length === 0) return;
+
+        const showcaseRect = showcase.getBoundingClientRect();
+        const inShowcase = showcaseRect.top <= 80 && showcaseRect.bottom >= window.innerHeight - 80;
+        if (!inShowcase) return;
+
+        const diffY = desktopTouchStartY - e.changedTouches[0].clientY;
+        const diffX = desktopTouchStartX - e.changedTouches[0].clientX;
+
+        if (Math.abs(diffY) > 35 && Math.abs(diffY) > Math.abs(diffX) * 1.2) {
+          if (isLocked || isAutoScrolling) return;
+
+          if (!isAutoScrolling) {
+            updateDesktopActiveStep();
+          }
+
+          if (diffY > 0) { // Swipe up = scroll down
+            if (desktopCurrentIndex < steps.length - 1) {
+              goToStep(desktopCurrentIndex + 1);
+            } else if (desktopCurrentIndex === steps.length - 1) {
+              goToNextSection();
+            }
+          } else { // Swipe down = scroll up
+            if (desktopCurrentIndex > 0) {
+              goToStep(desktopCurrentIndex - 1);
+            } else if (desktopCurrentIndex === 0) {
+              if (showcaseRect.top < -30) {
+                goToPrevHeader();
+              }
+            }
+          }
+        }
+      }, { passive: true });
     }
 
     function onDesktopScroll() {
       if (window.innerWidth <= 992) return;
 
-      if (!desktopIsTicking) {
-        desktopIsTicking = true;
-        requestAnimationFrame(updateDesktopActiveStep);
+      if (!isAutoScrolling) {
+        updateDesktopActiveStep();
       }
     }
 
-    steps.forEach((step) => {
+    steps.forEach((step, idx) => {
       step.addEventListener('click', () => {
         if (window.innerWidth > 992) {
-          step.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-          });
+          goToStep(idx);
         }
       });
     });
@@ -106,11 +352,6 @@
 
     const totalMobileCards = deckCards.length;
     const maxMobileProgress = Math.max(0, totalMobileCards - 1);
-
-    function smootherstep(t) {
-      t = Math.max(0, Math.min(1, t));
-      return t * t * t * (t * (t * 6 - 15) + 10);
-    }
 
     function computeMobileProgress() {
       if (!mobileScrollWrapper) return 0;
@@ -200,7 +441,7 @@
       const diff = mobileTargetProgress - mobileCurrentProgress;
 
       if (Math.abs(diff) > 0.0004) {
-        mobileCurrentProgress += diff * 0.11;
+        mobileCurrentProgress += diff * 0.18;
         applyMobileTransforms(mobileCurrentProgress);
         requestAnimationFrame(renderMobileLoop);
       } else {
@@ -259,11 +500,18 @@
         const diffY = touchStartY - e.changedTouches[0].clientY;
 
         if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY) * 1.2) {
-          if (diffX > 0 && mobileTargetProgress < maxMobileProgress) {
-            const nextStage = Math.min(maxMobileProgress, Math.round(mobileTargetProgress + 1));
-            mobileTargetProgress = nextStage;
-            wakeMobileAnimation();
-            scrollToMobileCard(nextStage);
+          if (diffX > 0) {
+            if (mobileTargetProgress < maxMobileProgress) {
+              const nextStage = Math.min(maxMobileProgress, Math.round(mobileTargetProgress + 1));
+              mobileTargetProgress = nextStage;
+              wakeMobileAnimation();
+              scrollToMobileCard(nextStage);
+            } else if (mobileTargetProgress >= maxMobileProgress) {
+              // Last card on mobile swipe left -> scroll to next section
+              if (nextSection) {
+                nextSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            }
           } else if (diffX < 0 && mobileTargetProgress > 0) {
             const prevStage = Math.max(0, Math.round(mobileTargetProgress - 1));
             mobileTargetProgress = prevStage;
@@ -298,6 +546,8 @@
       }
     }
 
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('scroll', onWindowScroll, { passive: true });
     window.addEventListener('resize', onWindowResize, { passive: true });
 

@@ -12,6 +12,7 @@
 @import url('./sections/judge.css');
 @import url('./sections/proves.css');
 @import url('./sections/footer.css');
+@import url('./sections/pentest-report.css');
 
 /* CSS Variables & Design Tokens */
 :root {
