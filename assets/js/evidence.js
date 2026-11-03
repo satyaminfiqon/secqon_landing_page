@@ -323,13 +323,18 @@
       if (isSideBySide) {
         // Desktop / Tablet side-by-side:
         // Connect from the right edge of active heading item to the left edge of fixed callout box
-        const x1 = Math.round(itemRect.right - wrapperRect.left + 8);
+        let x1 = Math.round(itemRect.right - wrapperRect.left + 6);
         const y1 = Math.round(itemRect.top - wrapperRect.top + itemRect.height / 2);
 
-        const x2 = Math.round(boxRect.left - wrapperRect.left - 2);
+        let x2 = Math.round(boxRect.left - wrapperRect.left - 2);
         const y2 = Math.round(boxRect.top - wrapperRect.top + boxRect.height / 2);
 
-        const deltaX = Math.max(16, x2 - x1);
+        // Safety clamping: ensure x1 is always forward towards x2 with at least 10px gap
+        if (x2 <= x1 + 8) {
+          x1 = Math.max(Math.round(itemRect.left - wrapperRect.left + 24), x2 - 12);
+        }
+
+        const deltaX = Math.max(12, x2 - x1);
         const cp1x = Math.round(x1 + deltaX * 0.45);
         const cp1y = y1;
         const cp2x = Math.round(x1 + deltaX * 0.55);
