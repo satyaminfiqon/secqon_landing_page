@@ -99,7 +99,7 @@
   font-family: var(--font-display);
   font-size: clamp(2.4rem, 4.2vw, 3.8rem);
   font-weight: 400;
-  line-height: 1.15;
+  line-height: 1;
   letter-spacing: -0.028em;
   color: #ffffff;
   margin-bottom: clamp(8px, 1.8vh, 20px);
@@ -117,6 +117,7 @@
   margin-bottom: clamp(10px, 2.2vh, 28px);
   font-weight: 400;
   max-width: 520px;
+  margin: 20px 0px;
 }
 
 /* --------------------------------------------------------------------------
@@ -295,6 +296,7 @@
 }
 
 .evidence-actions {
+  margin-top: 10px;
   display: flex;
   align-items: center;
   gap: clamp(10px, 1.2vw, 16px);
@@ -1033,7 +1035,7 @@
   }
 
   .evidence-desc {
-    margin-bottom: clamp(8px, 1.6vh, 18px);
+    margin: 20px 0;
   }
 
   .evidence-points-wrapper {
@@ -1133,7 +1135,8 @@
   }
 
   .evidence-desc {
-    margin-bottom: clamp(6px, 1.4vh, 12px);
+    /* margin-bottom: clamp(6px, 1.4vh, 12px); */
+    margin: 20px 0;
   }
 
   .evidence-points-wrapper {
@@ -1965,11 +1968,14 @@
     font-size: 0.63rem;
     line-height: 1.22;
     margin-bottom: 4px;
+    margin-top: 5px;
+    text-align: center;
   }
 
   .evidence-card-stage-header {
-    gap: 2px;
-    margin-bottom: 2px;
+    padding-top: 6px;
+    gap: 8px;
+    margin-bottom: 6px;
   }
 
   .evidence-stage-point {
