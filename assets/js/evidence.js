@@ -182,19 +182,26 @@
 
 /**
  * ==========================================================================
- * Evidence Section - Interactive 3D Card Shuffle & Synchronized Scroll
- * - Scroll synchronization: Scrolling page changes card according to left heading
- * - Fixed callout description box: Position is fixed, never jumps around
- * - Dynamic green SVG line: Automatically curves from the active point to the box
- * - User card swap mechanics: Cards swap class positions cleanly on click or scroll
- * - Fully responsive across all devices (Desktop, Tablet, Mobile)
+ * Evidence Section - Left-to-Right Carousel & Synchronized Content
+ * - Scrolling DOWN: Active card exits to the RIGHT (.shuffling-to-right),
+ *   upcoming card sweeps in from the LEFT (.entering-from-left) into active.
+ * - Scrolling UP: Active card exits to the LEFT (.shuffling-to-left),
+ *   previous card sweeps in from the RIGHT (.entering-from-right).
+ * - Point click: Cascades through intermediate cards to reveal the selected card.
+ * - Dynamic green SVG line: Automatically curves from the active point to the box.
+ * - Mobile responsive: Flat sleek view on <=820px, 3D animated deck on desktop.
  * ==========================================================================
  */
 (function () {
   document.addEventListener('DOMContentLoaded', () => {
     const scrollTrack = document.getElementById('evidenceScrollTrack');
     const pointItems = Array.from(document.querySelectorAll('.evidence-point-item'));
-    const cards = Array.from(document.querySelectorAll('.cards, .evidence-card'));
+    const cards = Array.from(new Set(document.querySelectorAll('#evidenceCardsDeck .cards, #evidenceCardsDeck .evidence-card, .evidence-cards-deck .cards, .evidence-cards-deck .evidence-card')))
+      .sort((a, b) => {
+        const aIdx = parseInt(a.getAttribute('data-card-index') || (a.id || '').replace(/\D/g, '') || 0, 10);
+        const bIdx = parseInt(b.getAttribute('data-card-index') || (b.id || '').replace(/\D/g, '') || 0, 10);
+        return aIdx - bIdx;
+      });
     const deckElement = document.getElementById('evidenceCardsDeck');
     const wrapper = document.getElementById('evidencePointsWrapper');
     const calloutBox = document.querySelector('.evidence-callout-box');
@@ -206,24 +213,97 @@
     if (!cards || cards.length === 0 || pointItems.length === 0) return;
 
     const totalSteps = pointItems.length;
-    let currentIndex = 0;
+    let currentIndex = -1;
     let isManualScrolling = false;
     let scrollTimeout = null;
+    let animTimeout = null;
+    let cascadeTimer = null;
 
-    // 1. Initial 3D position classes for cards
-    const setClasses = () => {
-      const classes = cards.length <= 3
-        ? ['left', 'active', 'right']
-        : ['active', 'right', 'right-2', 'left-2', 'left'];
+    // Slot layout:
+    // Slot 0: active (front center)
+    // Slot 1: left (upcoming card waiting on left side!)
+    // Slot 2: left-2 (far left peeking card)
+    // Slot 3: right-2 (far right departing card)
+    // Slot 4: right (recently departed card resting on right side)
+    const slotClasses = cards.length <= 3
+      ? ['active', 'left', 'right']
+      : ['active', 'left', 'left-2', 'right-2', 'right'];
 
-      cards.forEach((card, index) => {
+    // Cancel any active cascading card dealing sequence
+    const cancelCascade = () => {
+      if (cascadeTimer) {
+        clearTimeout(cascadeTimer);
+        cascadeTimer = null;
+      }
+    };
+
+    // 1. Update full 5-card 3D deck positions and trigger smooth animations
+    const updateCardDeck = (newIndex, previousIndex, animate = true) => {
+      if (animTimeout) {
+        clearTimeout(animTimeout);
+        animTimeout = null;
+      }
+
+      // Determine motion direction:
+      // Scrolling down (0 -> 1 -> 2 -> 3 -> 4) or forward wrap (4 -> 0) is forward
+      let isForward = true;
+      if (previousIndex !== undefined && previousIndex !== newIndex) {
+        const forwardDistance = (newIndex - previousIndex + totalSteps) % totalSteps;
+        isForward = forwardDistance <= totalSteps / 2;
+      }
+
+      cards.forEach((card) => {
         if (!card.classList.contains('cards')) {
           card.classList.add('cards');
         }
-        if (classes[index]) {
-          card.classList.add(classes[index]);
+
+        const dataIdx = card.getAttribute('data-card-index');
+        const cardIdx = dataIdx !== null
+          ? parseInt(dataIdx, 10)
+          : parseInt((card.id || '').replace(/\D/g, ''), 10) || 0;
+
+        const offset = (cardIdx - newIndex + totalSteps) % totalSteps;
+        const targetClass = slotClasses[offset] || 'cards';
+
+        // Strip old position and animation classes
+        card.classList.remove(
+          'active', 'left', 'left-2', 'right-2', 'right',
+          'shuffling-to-right', 'entering-from-left',
+          'shuffling-to-left', 'entering-from-right',
+          'shuffling-cw', 'entering-cw', 'shuffling-ccw', 'entering-ccw'
+        );
+        card.classList.add(targetClass);
+
+        // Apply deal flick & entrance arc animation on desktop (> 820px)
+        if (animate && window.innerWidth > 820 && previousIndex !== undefined && previousIndex !== newIndex) {
+          if (cardIdx === previousIndex) {
+            // Active card exiting:
+            // When scrolling DOWN (isForward): deals out to the RIGHT with a pop
+            // When scrolling UP (!isForward): deals out to the LEFT
+            card.classList.add(isForward ? 'shuffling-to-right' : 'shuffling-to-left');
+          } else if (targetClass === 'active') {
+            // Incoming card entering active:
+            // When scrolling DOWN (isForward): sweeps in from the LEFT into center
+            // When scrolling UP (!isForward): sweeps in from the RIGHT into center
+            card.classList.add(isForward ? 'entering-from-left' : 'entering-from-right');
+          }
         }
+
+        card.setAttribute('aria-hidden', targetClass === 'active' ? 'false' : 'true');
       });
+
+      if (animate && window.innerWidth > 820 && previousIndex !== undefined && previousIndex !== newIndex) {
+        animTimeout = setTimeout(() => {
+          cards.forEach((c) => {
+            c.classList.remove(
+              'shuffling-to-right', 'entering-from-left',
+              'shuffling-to-left', 'entering-from-right',
+              'shuffling-cw', 'entering-cw', 'shuffling-ccw', 'entering-ccw'
+            );
+          });
+          animTimeout = null;
+        }, 650);
+      }
     };
 
     // 2. Dynamic Green SVG Connector Line from active heading to fixed description box
@@ -344,37 +424,27 @@
 
       scrollTimeout = setTimeout(() => {
         isManualScrolling = false;
-      }, 650);
+      }, 750);
     };
 
     // 5. Set active step across headings, green line, and 3D card deck
-    const setActiveStep = (newStep, updateScroll = false) => {
+    const setActiveStep = (newStep, updateScroll = false, force = false, isIntermediate = false) => {
       if (newStep < 0) newStep = 0;
       if (newStep >= totalSteps) newStep = totalSteps - 1;
 
+      if (!force && newStep === currentIndex && !updateScroll) return;
+
+      const prevStep = currentIndex;
       currentIndex = newStep;
 
-      // Swap target card into active slot if not already active
-      const targetCard = document.querySelector(`.cards[data-card-index="${newStep}"], #card-${newStep}`);
-      const activeCard = document.querySelector('.cards.active');
-
-      if (targetCard && activeCard && targetCard !== activeCard) {
-        const classesFrom = targetCard.className;
-        const classesTo = activeCard.className;
-        targetCard.className = classesTo;
-        activeCard.className = classesFrom;
-      }
+      // Rotate all cards in circular 3D deck and reveal target content
+      updateCardDeck(newStep, prevStep >= 0 ? prevStep : undefined, prevStep >= 0);
 
       // Synchronize left heading points highlight
       pointItems.forEach((item, idx) => {
         const isActive = idx === newStep;
         item.classList.toggle('active', isActive);
         item.setAttribute('aria-selected', isActive ? 'true' : 'false');
-      });
-
-      // Update card accessibility
-      cards.forEach((card) => {
-        card.setAttribute('aria-hidden', card.classList.contains('active') ? 'false' : 'true');
       });
 
       // Update mobile stepper dots
@@ -384,32 +454,97 @@
         dot.setAttribute('aria-current', idx === newStep ? 'true' : 'false');
       });
 
-      // Update callout text & green line
-      updateCalloutText(newStep);
-      requestAnimationFrame(() => updateGreenLine(newStep));
+      // On intermediate steps in a cascade, skip heavy redraw of callout text and SVG line
+      if (!isIntermediate) {
+        updateCalloutText(newStep);
+        requestAnimationFrame(() => updateGreenLine(newStep));
+      }
 
       if (updateScroll) {
         scrollToStep(newStep);
       }
     };
 
-    // 6. Card click swap logic (user's specification)
+    // 6. Multi-step point click cascading shuffle:
+    // When jumping points (e.g. from first to last point), rapidly shuffles cards to the target
+    const triggerPointTransition = (targetIndex) => {
+      if (targetIndex === currentIndex) {
+        // If already active, advance forward by 1 (circular)
+        targetIndex = (currentIndex + 1) % totalSteps;
+      }
+
+      cancelCascade();
+
+      const startStep = currentIndex;
+      const diff = targetIndex - startStep;
+
+      // If on mobile or only 1 step away, perform direct smooth transition
+      if (window.innerWidth <= 820 || Math.abs(diff) === 1 || (startStep === totalSteps - 1 && targetIndex === 0) || (startStep === 0 && targetIndex === totalSteps - 1)) {
+        setActiveStep(targetIndex, true, false, false);
+        return;
+      }
+
+      // Multi-step jump:
+      // Build intermediate step sequence so all cards deal and shuffle to the target
+      const steps = [];
+      if (diff > 0) {
+        for (let s = startStep + 1; s <= targetIndex; s++) {
+          steps.push(s);
+        }
+      } else {
+        for (let s = startStep - 1; s >= targetIndex; s--) {
+          steps.push(s);
+        }
+      }
+
+      // Snappy step interval so cascading cards deal continuously across screen
+      const stepInterval = Math.max(130, Math.min(170, Math.floor(580 / steps.length)));
+
+      let stepIdx = 0;
+      isManualScrolling = true;
+      clearTimeout(scrollTimeout);
+
+      function executeCascade() {
+        if (stepIdx >= steps.length) {
+          cascadeTimer = null;
+          isManualScrolling = false;
+          return;
+        }
+
+        const nextStep = steps[stepIdx];
+        const isLast = (stepIdx === steps.length - 1);
+
+        // Intermediate steps deal quickly; final step updates scroll, callout, and green line
+        setActiveStep(nextStep, isLast, false, !isLast);
+
+        stepIdx++;
+        if (!isLast) {
+          cascadeTimer = setTimeout(executeCascade, stepInterval);
+        } else {
+          cascadeTimer = null;
+        }
+      }
+
+      executeCascade();
+    };
+
+    // 7. Card click interaction:
+    // Clicking active front card triggers advance to next step
+    // Clicking a peeking side card cascades/shuffles directly to that card
     const changePositions = (e) => {
       const clickedCard = e.currentTarget;
-      const activeCard = document.querySelector('.cards.active');
-      if (!activeCard || clickedCard.classList.contains('active')) return;
-
-      const classesFrom = clickedCard.className;
-      const classesTo = activeCard.className;
-      clickedCard.className = classesTo;
-      activeCard.className = classesFrom;
-
       const dataIdx = clickedCard.getAttribute('data-card-index');
-      const newIdx = dataIdx !== null
+      const clickedIdx = dataIdx !== null
         ? parseInt(dataIdx, 10)
         : parseInt((clickedCard.id || '').replace(/\D/g, ''), 10) || 0;
 
-      setActiveStep(newIdx, true);
+      if (clickedCard.classList.contains('active')) {
+        // Active card clicked: advance to next card in deck
+        triggerPointTransition((currentIndex + 1) % totalSteps);
+      } else {
+        // Peeking card clicked: cascade/shuffle to bring that card to active
+        triggerPointTransition(clickedIdx);
+      }
     };
 
     // Attach card click handlers
@@ -417,15 +552,19 @@
       card.addEventListener('click', changePositions);
     });
 
+    // Also allow clicking deck background to advance
+    if (deckElement) {
+      deckElement.addEventListener('click', (e) => {
+        if (!e.target.closest('.evidence-card, .cards')) {
+          triggerPointTransition((currentIndex + 1) % totalSteps);
+        }
+      });
+    }
+
     // Attach heading point click handlers
     pointItems.forEach((item, index) => {
       item.addEventListener('click', () => {
-        if (window.innerWidth <= 820) {
-          // On mobile view, tapping the active heading advances to next card
-          setActiveStep((currentIndex + 1) % totalSteps, true);
-        } else {
-          setActiveStep(index, true);
-        }
+        triggerPointTransition(index);
       });
     });
 
@@ -434,12 +573,12 @@
       dot.addEventListener('click', (e) => {
         const step = parseInt(e.currentTarget.getAttribute('data-step'), 10);
         if (!isNaN(step)) {
-          setActiveStep(step, true);
+          triggerPointTransition(step);
         }
       });
     });
 
-    // 7. Scroll handler: updates active card & heading as user scrolls through the track
+    // 8. Scroll handler: updates active card & heading as user scrolls through the track
     const handleScroll = () => {
       if (isManualScrolling || !scrollTrack) return;
 
@@ -448,16 +587,20 @@
 
       if (scrollDistance <= 0) return;
 
+      // Only process when track intersects viewport
+      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+
       const scrolled = -rect.top;
       const progress = Math.max(0, Math.min(1, scrolled / scrollDistance));
       const calculatedStep = Math.min(totalSteps - 1, Math.floor(progress * totalSteps));
 
       if (calculatedStep !== currentIndex) {
+        cancelCascade();
         setActiveStep(calculatedStep, false);
       }
     };
 
-    // 8. Mobile touch swipe gesture support (Swipe Up / Down / Left / Right)
+    // 9. Mobile touch swipe gesture support (Swipe Up / Down / Left / Right)
     const touchArea = document.getElementById('evidenceStickyWrapper') || document.getElementById('report-details') || deckElement;
 
     if (touchArea) {
@@ -485,18 +628,18 @@
             if (Math.abs(diffY) > 35 && Math.abs(diffY) > Math.abs(diffX)) {
               if (diffY < 0) {
                 // Swiped UP -> Show next heading & card content
-                setActiveStep((currentIndex + 1) % totalSteps, true);
+                triggerPointTransition((currentIndex + 1) % totalSteps);
               } else {
                 // Swiped DOWN -> Show previous heading & card content
-                setActiveStep((currentIndex - 1 + totalSteps) % totalSteps, true);
+                triggerPointTransition((currentIndex - 1 + totalSteps) % totalSteps);
               }
             }
             // Horizontal swipe (Left -> next, Right -> previous)
             else if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY)) {
               if (diffX < 0) {
-                setActiveStep((currentIndex + 1) % totalSteps, true);
+                triggerPointTransition((currentIndex + 1) % totalSteps);
               } else {
-                setActiveStep((currentIndex - 1 + totalSteps) % totalSteps, true);
+                triggerPointTransition((currentIndex - 1 + totalSteps) % totalSteps);
               }
             }
           }
@@ -506,16 +649,25 @@
 
     // Scroll & Resize listeners
     window.addEventListener('scroll', handleScroll, { passive: true });
+
+    let resizeTimer = null;
     window.addEventListener('resize', () => {
-      updateGreenLine(currentIndex);
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        updateGreenLine(currentIndex);
+        updateCardDeck(currentIndex, undefined, false);
+      }, 100);
     }, { passive: true });
+
     window.addEventListener('orientationchange', () => {
-      setTimeout(() => updateGreenLine(currentIndex), 150);
+      setTimeout(() => {
+        updateGreenLine(currentIndex);
+        updateCardDeck(currentIndex, undefined, false);
+      }, 150);
     }, { passive: true });
 
     // Initialize layout and state
-    setClasses();
-    setActiveStep(0, false);
+    setActiveStep(0, false, true);
     setTimeout(() => {
       updateGreenLine(0);
     }, 100);

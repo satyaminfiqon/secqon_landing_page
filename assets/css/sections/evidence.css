@@ -770,6 +770,119 @@
 }
 
 /* --------------------------------------------------------------------------
+   Right-to-Left Card Shuffle & Transfer Animations (Desktop)
+   - When scrolling down / advancing:
+     Active card deals out to the left (.shuffling-to-left)
+     Upcoming card sweeps in from the right (.entering-from-right)
+   - When scrolling up / retreating:
+     Active card deals out to the right (.shuffling-to-right)
+     Upcoming card sweeps in from the left (.entering-from-left)
+   -------------------------------------------------------------------------- */
+@keyframes cardExitToRight {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    z-index: 12;
+    opacity: 1;
+  }
+  38% {
+    transform: translate3d(18%, -16px, 70px) scale(1.02) rotate(6deg);
+    z-index: 12;
+    opacity: 0.95;
+    box-shadow: 0 35px 85px rgba(0, 0, 0, 0.9), 0 0 45px rgba(79, 169, 81, 0.35);
+  }
+  100% {
+    transform: translate3d(34%, 12px, -80px) scale(0.88) rotate(5.5deg);
+    z-index: 6;
+    opacity: 0.68;
+  }
+}
+
+@keyframes cardEnterFromLeft {
+  0% {
+    transform: translate3d(-34%, 12px, -80px) scale(0.88) rotate(-5.5deg);
+    z-index: 8;
+    opacity: 0.75;
+  }
+  42% {
+    transform: translate3d(-10%, -6px, 35px) scale(0.98) rotate(2deg);
+    z-index: 10;
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    z-index: 10;
+    opacity: 1;
+  }
+}
+
+@keyframes cardExitToLeft {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    z-index: 12;
+    opacity: 1;
+  }
+  38% {
+    transform: translate3d(-18%, -16px, 70px) scale(1.02) rotate(-6deg);
+    z-index: 12;
+    opacity: 0.95;
+    box-shadow: 0 35px 85px rgba(0, 0, 0, 0.9), 0 0 45px rgba(79, 169, 81, 0.35);
+  }
+  100% {
+    transform: translate3d(-34%, 12px, -80px) scale(0.88) rotate(-5.5deg);
+    z-index: 6;
+    opacity: 0.68;
+  }
+}
+
+@keyframes cardEnterFromRight {
+  0% {
+    transform: translate3d(34%, 12px, -80px) scale(0.88) rotate(5.5deg);
+    z-index: 8;
+    opacity: 0.75;
+  }
+  42% {
+    transform: translate3d(10%, -6px, 35px) scale(0.98) rotate(-2deg);
+    z-index: 10;
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    z-index: 10;
+    opacity: 1;
+  }
+}
+
+.cards.shuffling-to-right,
+.evidence-card.shuffling-to-right,
+.cards.shuffling-cw,
+.evidence-card.shuffling-cw {
+  animation: cardExitToRight 0.62s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  pointer-events: none;
+}
+
+.cards.entering-from-left,
+.evidence-card.entering-from-left,
+.cards.entering-cw,
+.evidence-card.entering-cw {
+  animation: cardEnterFromLeft 0.62s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.cards.shuffling-to-left,
+.evidence-card.shuffling-to-left,
+.cards.shuffling-ccw,
+.evidence-card.shuffling-ccw {
+  animation: cardExitToLeft 0.62s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  pointer-events: none;
+}
+
+.cards.entering-from-right,
+.evidence-card.entering-from-right,
+.cards.entering-ccw,
+.evidence-card.entering-ccw {
+  animation: cardEnterFromRight 0.62s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* --------------------------------------------------------------------------
    Responsive Media Queries
    -------------------------------------------------------------------------- */
 @media (max-width: 1200px) {
