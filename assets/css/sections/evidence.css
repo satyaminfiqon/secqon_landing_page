@@ -405,6 +405,16 @@
   overflow: hidden;
 }
 
+/* Mobile Stage Header (Point + Details) - Hidden on desktop */
+.evidence-card-stage-header {
+  display: none !important;
+}
+
+/* Card inner box behaves as a transparent container on desktop */
+.card-inner-box {
+  display: contents;
+}
+
 /* Internal content wrapper */
 .card-mockup-content {
   display: flex;
@@ -1433,9 +1443,10 @@
     min-height: 100vh;
     min-height: 100dvh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 16px 18px;
+    padding: clamp(10px, 2vh, 18px) clamp(16px, 4vw, 22px);
     box-sizing: border-box;
     overflow: hidden;
   }
@@ -1447,125 +1458,47 @@
     width: 100%;
     max-width: 440px;
     height: 100%;
-    max-height: 96dvh;
+    max-height: 100%;
     padding: 0;
     gap: 0;
     margin: 0 auto;
+    box-sizing: border-box;
   }
 
   .evidence-content-col {
     display: contents;
   }
 
-  /* 1. Header block */
+  /* 1. Stationary Header block (stays fixed at top, does not animate on step change) */
   .evidence-eyebrow {
     order: 1;
-    margin-bottom: 6px;
-    font-size: 0.7rem;
+    margin-bottom: 4px;
+    font-size: 0.68rem;
     letter-spacing: 0.16em;
     color: #7e8b9b;
   }
 
   .evidence-title {
     order: 2;
-    font-size: clamp(1.7rem, 6.4vw, 2.2rem);
-    line-height: 1.14;
-    margin-bottom: 8px;
+    font-size: clamp(1.48rem, 5.8vw, 1.95rem);
+    line-height: 1.15;
+    margin-bottom: 6px;
     color: #ffffff;
   }
 
   .evidence-desc {
     order: 3;
-    font-size: 0.8rem;
-    line-height: 1.4;
+    font-size: clamp(0.74rem, 2.3vw, 0.82rem);
+    line-height: 1.42;
     color: #8c9bb0;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
     max-width: 100%;
+    text-align: center;
   }
 
-  /* 2. Heading + Callout + Stepper block */
+  /* 2. Hide desktop points wrapper on mobile - each slide now contains its own Point + Details */
   .evidence-points-wrapper {
-    order: 4;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    width: 100%;
-    min-height: auto;
-    margin-bottom: 12px;
-    position: relative;
-  }
-
-  .evidence-points-list {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    margin: 0;
-    padding: 0;
-  }
-
-  /* Hide inactive headings on mobile - ONLY active heading is visible */
-  .evidence-point-item:not(.active) {
     display: none !important;
-  }
-
-  .evidence-point-item.active {
-    display: inline-flex !important;
-    align-items: center;
-    gap: 10px;
-    padding: 2px 0;
-    width: auto;
-    cursor: pointer;
-    animation: mobileHeadingIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  }
-
-  .evidence-point-item.active .point-radio {
-    width: 18px;
-    height: 18px;
-    border-color: #4fa951;
-    box-shadow: 0 0 12px rgba(79, 169, 81, 0.6);
-  }
-
-  .evidence-point-item.active .point-radio::after {
-    width: 6px;
-    height: 6px;
-    background-color: #4fa951;
-    border-color: #4fa951;
-    transform: scale(1.15);
-  }
-
-  .evidence-point-item.active .point-label {
-    font-size: 0.98rem;
-    font-weight: 500;
-    color: #4fa951;
-    white-space: normal;
-  }
-
-  /* Callout box directly beneath the active heading */
-  .evidence-callout-container {
-    position: static;
-    transform: none;
-    width: 100%;
-    margin: 4px 0 0;
-    pointer-events: auto;
-  }
-
-  .evidence-callout-box {
-    width: 100%;
-    max-width: 100%;
-    background: rgba(14, 38, 22, 0.94);
-    border: 1px solid rgba(79, 169, 81, 0.55);
-    border-radius: 8px;
-    padding: 10px 14px;
-    box-sizing: border-box;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55), 0 0 12px rgba(79, 169, 81, 0.14);
-  }
-
-  .evidence-callout-text {
-    font-size: 0.82rem;
-    line-height: 1.4;
-    color: #bbf7d0;
   }
 
   /* Hide the desktop SVG connector on mobile */
@@ -1573,48 +1506,22 @@
     display: none !important;
   }
 
-  /* Stepper Dots */
-  .evidence-mobile-stepper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 6px;
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .mobile-step-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.22);
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    transition: all 0.25s ease;
-  }
-
-  .mobile-step-dot.active {
-    width: 20px;
-    border-radius: 3px;
-    background: #4fa951;
-    box-shadow: 0 0 10px rgba(79, 169, 81, 0.6);
-  }
-
-  /* 3. Card block below callout box */
+  /* 3. Animated Section: Card Viewport & Stages-Style Card Slide Animation */
   .evidence-visual-col {
-    order: 5;
+    order: 4;
     display: flex !important;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
     width: 100%;
     flex: 1 1 auto;
-    min-height: 280px;
-    max-height: clamp(300px, 48vh, 400px);
+    min-height: 290px;
+    max-height: clamp(320px, 68vh, 520px);
     position: relative;
     perspective: none !important;
     margin-top: 4px;
-    overflow: visible;
+    margin-bottom: 2px;
+    overflow: hidden; /* Cleanly masks incoming/outgoing card slide */
+    border-radius: 14px;
   }
 
   .evidence-deck-glow {
@@ -1622,133 +1529,261 @@
   }
 
   .evidence-cards-deck {
+    position: relative;
     width: 100%;
     height: 100%;
     max-width: 100%;
-    position: relative;
     transform-style: flat !important;
   }
 
-  /* Inactive cards hidden on mobile */
-  .evidence-card:not(.active) {
-    display: none !important;
-  }
-
-  /* Active card displayed flat, full width, sleek rounded container */
-  .evidence-card.active {
-    display: flex !important;
+  /* Card base on mobile: transparent slide unit containing Stage Header + Card Inner Box */
+  .evidence-card {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    border-radius: 12px;
-    padding: 14px 14px;
-    background: linear-gradient(155deg, rgba(16, 26, 42, 0.96) 0%, rgba(8, 14, 25, 0.98) 100%);
-    border: 1px solid rgba(79, 169, 81, 0.35);
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transform: none !important;
-    opacity: 1 !important;
-    z-index: 10 !important;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    animation: mobileCardIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    border-radius: 14px;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 1;
+    transform: translate3d(0, 100%, 0) scale(0.95);
+    transform-origin: center center;
+    transition: none !important;
+    will-change: transform, opacity;
+    overflow: visible;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    gap: 6px;
   }
 
-  /* Card inner content mobile scaling */
+  .evidence-card::before {
+    display: none !important;
+  }
+
+  /* Initial active state fallback before JS LERP initializes */
+  .evidence-card:first-child,
+  .evidence-card.active {
+    display: flex !important;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    z-index: 10;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  /* Stage Header: Point (radio + label) and Details (callout box) inside the slide */
+  .evidence-card-stage-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start;
+    gap: 5px;
+    width: 100%;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+  }
+
+  .evidence-stage-point {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 2px 0;
+    width: auto;
+    cursor: pointer;
+  }
+
+  .evidence-stage-point .point-radio {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1.8px solid #4fa951;
+    box-shadow: 0 0 12px rgba(79, 169, 81, 0.6);
+    background: rgba(14, 20, 32, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .evidence-stage-point .point-radio::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #4fa951;
+    border: 1.5px solid #4fa951;
+    transform: scale(1.15);
+  }
+
+  .evidence-stage-point .point-label {
+    font-size: clamp(0.92rem, 3.2vw, 1.02rem);
+    font-weight: 500;
+    color: #4fa951;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .evidence-stage-callout {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(14, 38, 22, 0.94);
+    border: 1px solid rgba(79, 169, 81, 0.55);
+    border-radius: 8px;
+    padding: 8px 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55), 0 0 12px rgba(79, 169, 81, 0.14);
+  }
+
+  .evidence-stage-callout .evidence-callout-text {
+    font-size: clamp(0.72rem, 2.2vw, 0.8rem);
+    line-height: 1.4;
+    color: #bbf7d0;
+    display: block;
+  }
+
+  /* The actual glass card mockup frame */
+  .card-inner-box {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    box-sizing: border-box;
+    border-radius: 14px;
+    padding: 11px 13px;
+    background: linear-gradient(155deg, rgba(16, 26, 42, 0.96) 0%, rgba(8, 14, 25, 0.98) 100%);
+    border: 1px solid rgba(79, 169, 81, 0.35);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+  }
+
+  /* ==========================================================================
+     Stages-style continuous vertical slide & scale engine:
+     Point + Details + Card animate together as ONE unified unit!
+     - Smooth continuous scrub with physics-based LERP interpolation on rAF
+     - Size reduces progressively (scale 1.0 -> 0.76) as it moves upward
+     - Next card glides upward from below (translateY 100% -> 0%, scale 0.94 -> 1.0)
+     - Controlled frame-by-frame directly in assets/js/evidence.js
+     ========================================================================== */
+
+  /* Full Card internal elements tuned for 100% visibility without cutoffs */
+  .card-mockup-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+
   .card-header-bar {
-    margin-bottom: 8px;
-    padding-bottom: 6px;
+    margin-bottom: 7px;
+    padding-bottom: 5px;
   }
 
   .card-brand-lockup {
-    gap: 8px;
+    gap: 7px;
   }
 
   .card-brand-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .card-brand-tag {
+    font-size: 0.62rem;
+  }
+
+  .card-header-meta {
+    font-size: 0.62rem;
+  }
+
+  .card-title-group {
+    margin-bottom: 7px;
+  }
+
+  .card-entity-title {
+    font-size: 1.08rem;
+    margin-bottom: 1px;
+    line-height: 1.2;
+  }
+
+  .card-entity-sub {
+    font-size: 0.68rem;
+    line-height: 1.35;
+  }
+
+  .card-score-banner {
+    padding: 7px 11px;
+    margin-bottom: 7px;
+    border-radius: 8px;
+  }
+
+  .score-grade {
+    font-size: 1.38rem;
+  }
+
+  .score-desc-title {
+    font-size: 0.74rem;
+  }
+
+  .score-desc-status {
+    font-size: 0.6rem;
+  }
+
+  .score-radar-wrap {
+    width: 24px;
+    height: 24px;
+  }
+
+  .radar-circle-outer {
     width: 22px;
     height: 22px;
   }
 
-  .card-brand-tag {
-    font-size: 0.64rem;
-  }
-
-  .card-header-meta {
-    font-size: 0.64rem;
-  }
-
-  .card-title-group {
-    margin-bottom: 8px;
-  }
-
-  .card-entity-title {
-    font-size: 1.1rem;
-    margin-bottom: 2px;
-  }
-
-  .card-entity-sub {
-    font-size: 0.72rem;
-  }
-
-  .card-score-banner {
-    padding: 8px 12px;
-    margin-bottom: 8px;
-  }
-
-  .score-grade {
-    font-size: 1.4rem;
-  }
-
-  .score-desc-title {
-    font-size: 0.76rem;
-  }
-
-  .score-desc-status {
-    font-size: 0.64rem;
-  }
-
-  .score-radar-wrap {
-    width: 28px;
-    height: 28px;
-  }
-
-  .radar-circle-outer {
-    width: 26px;
-    height: 26px;
-  }
-
   .radar-circle-inner {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
   }
 
   .card-findings-list {
-    gap: 6px;
-    margin-bottom: 8px;
+    gap: 4px;
+    margin-bottom: 7px;
   }
 
   .card-finding-row {
-    padding: 6px 10px;
-    font-size: 0.72rem;
+    padding: 5px 8px;
+    font-size: 0.7rem;
+    border-radius: 6px;
   }
 
   .finding-badge {
-    font-size: 0.6rem;
+    font-size: 0.56rem;
     padding: 2px 5px;
   }
 
   .card-code-block {
-    padding: 8px 10px;
-    font-size: 0.68rem;
-    line-height: 1.45;
-    margin-bottom: 8px;
+    padding: 7px 9px;
+    font-size: 0.64rem;
+    line-height: 1.35;
+    margin-bottom: 6px;
+    border-radius: 6px;
   }
 
   .card-footer-bar {
     padding-top: 6px;
-    font-size: 0.64rem;
+    font-size: 0.62rem;
+    margin-top: auto;
   }
 
   /* 4. Action buttons hidden inside sticky presentation to maintain clean view */
@@ -1757,76 +1792,40 @@
   }
 }
 
-/* Mobile compact height adjustments (<= 820px width & <= 680px height) */
-@media (max-width: 820px) and (max-height: 680px) {
-  .evidence-eyebrow {
-    margin-bottom: 3px;
-    font-size: 0.65rem;
+/* Mobile compact height adjustments (<= 820px width & <= 650px height) */
+@media (max-width: 820px) and (max-height: 650px) {
+  .evidence-sticky-wrapper {
+    padding: 6px 14px;
+    overflow: hidden;
   }
 
   .evidence-title {
-    font-size: clamp(1.35rem, 5vw, 1.65rem);
-    margin-bottom: 4px;
-    line-height: 1.1;
+    font-size: clamp(1.7rem, 4.8vw, 2.5rem);
+    margin-bottom: 2px;
   }
 
   .evidence-desc {
-    display: none;
+    font-size: 0.68rem;
+    line-height: 1.28;
+    margin-bottom: 4px;
+    margin-top: 5px;
   }
 
-  .evidence-points-wrapper {
-    margin-bottom: 6px;
+  .evidence-card-stage-header {
     gap: 4px;
+    margin-bottom: 2px;
   }
 
-  .evidence-callout-box {
+  .evidence-stage-callout {
     padding: 6px 10px;
   }
 
-  .evidence-callout-text {
-    font-size: 0.74rem;
-    line-height: 1.3;
+  .card-inner-box {
+    padding: 8px 10px;
   }
 
   .evidence-visual-col {
-    min-height: 220px;
-    max-height: clamp(220px, 46vh, 320px);
-  }
-
-  .card-entity-title {
-    font-size: 1rem;
-  }
-
-  .card-findings-list {
-    gap: 4px;
-    margin-bottom: 6px;
-  }
-
-  .card-finding-row {
-    padding: 4px 8px;
-    font-size: 0.68rem;
-  }
-}
-
-/* Animations for Mobile step transitions */
-@keyframes mobileHeadingIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes mobileCardIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+    min-height: 240px;
+    max-height: clamp(240px, 60vh, 380px);
   }
 }
